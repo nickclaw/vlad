@@ -1,0 +1,27 @@
+{
+  "name": "vlad",
+  "version": "0.1.0",
+  "description": "Validate and resolve option objects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickclaw/vlad"
+  },
+  "keywords": [
+    "validate",
+    "resolve"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nickclaw/vlad/issues"
+  },
+  "homepage": "https://github.com/nickclaw/vlad",
+  "dependencies": {
+    "jsonschema": "^1.0.0",
+    "lodash": "^2.4.1"
+  }
+}
