@@ -68,7 +68,7 @@ function resolveObject(obj) {
 
             // if we haven't given up yet, add to resolved map
             if (success && result.isFulfilled()) {
-                resolved[key[i]] = result.value();
+                resolved[keys[i]] = result.value();
             }
 
             // rejected add to rejected map and set success flag to false
