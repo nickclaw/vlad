@@ -1,7 +1,7 @@
 {
   "name": "vlad",
-  "version": "0.1.0",
-  "description": "Validate and resolve option objects.",
+  "version": "0.2.0",
+  "description": "JSON schema validation with a chainable syntax.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,9 +12,15 @@
   },
   "keywords": [
     "validate",
-    "resolve"
+    "resolve",
+    "schema",
+    "json",
+    "jsonschema"
   ],
-  "author": "",
+  "author": {
+      "name": "Nicholas Clawson",
+      "url": "http://nickclaw.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nickclaw/vlad/issues"
