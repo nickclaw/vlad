@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     util = require('./util'),
+    Promise = require('bluebird'),
     validate = require('jsonschema').validate;
 
 
@@ -28,12 +29,10 @@ function vlad(schema) {
         var o = Object.create(null);
 
         for (key in schema) {
-            var result = resolve(schema[key], obj[key]);
-            if (result.errors) return result.errors[0].message;
-            o[key] = result.instance;
+            o[key] = resolve(key, schema[key], obj[key]);
         }
 
-        return o;
+        return util.resolveObject(o);
     }
 }
 
@@ -56,6 +55,7 @@ vlad.enum = function createEnum(enums, def) {
 }
 
 
+
 //
 // Util
 //
@@ -67,18 +67,16 @@ function reduceSchema(memo, value, key) {
 }
 
 /**
- * Resolve a schema rule or function against a value
+ * Resolve a function or jsonschema to a promise
+ * @param {String} key
  * @param {Function|Object} rule
  * @param {*} value
- * @return {Function}
+ * @param {Promise}
  */
-function resolve(rule, value) {
-    var result;
-    if (typeof rule === 'function') {
-        result = rule(value);
-    } else {
-        result = validate(value, rule);
-    }
+function resolve(key, rule, value) {
+    if (typeof rule === 'function') return rule(value);
 
-    return result;
+    var result = validate(value, rule);
+    if (result.errors.length) return Promise.reject(result.errors[0].message);
+    return Promise.resolve(result.instance);
 }

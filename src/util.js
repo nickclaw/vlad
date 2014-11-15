@@ -1,4 +1,5 @@
-var _ = require('lodash');
+var _ = require('lodash'),
+    Promise = require('bluebird');
 
 /**
  * A property definer, used for chained syntax
@@ -48,8 +49,43 @@ function keyMap(ctx, fn) {
     return obj;
 }
 
+/**
+ * Resolve an object of promises
+ * @param {Object} obj
+ * @return {Promise}
+ */
+function resolveObject(obj) {
+    var values = _.values(obj),
+        keys = _.keys(obj);
+
+    return Promise.settle(values).then(function(results) {
+        var rejected = {},
+            resolved = {},
+            success = true;
+
+        // go over each promsei
+        _.each(results, function(result, i) {
+
+            // if we haven't given up yet, add to resolved map
+            if (success && result.isFulfilled()) {
+                resolved[key[i]] = result.value();
+            }
+
+            // rejected add to rejected map and set success flag to false
+            if (result.isRejected()) {
+                success = false;
+                rejected[keys[i]] = result.reason();
+            }
+        });
+
+        return success ? Promise.resolve(resolved) : Promise.reject(rejected);
+    });
+}
+
+
 module.exports = {
     defineProperty: defineProperty,
     defineProperties: defineProperties,
-    keyMap: keyMap
+    keyMap: keyMap,
+    resolveObject: resolveObject
 }
