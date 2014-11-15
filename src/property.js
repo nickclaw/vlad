@@ -11,6 +11,8 @@ var property = {
      */
     default: function(value) {
         this._default = value;
+        this._required = false;
+        return this;
     },
 
     /**
@@ -34,7 +36,7 @@ util.defineProperties(property, {
      * Force the property to be required
      */
     required: function() {
-        this._required = true;
+        this._required = this._default === undefined
     },
 
     /**
