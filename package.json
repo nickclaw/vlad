@@ -4,22 +4,22 @@
   "description": "JSON schema validation with a chainable syntax.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nickclaw/vlad"
   },
   "keywords": [
+    "jsonschema",
     "validate",
     "resolve",
     "schema",
-    "json",
-    "jsonschema"
+    "json"
   ],
   "author": {
-      "name": "Nicholas Clawson",
-      "url": "http://nickclaw.com"
+    "name": "Nicholas Clawson",
+    "url": "http://nickclaw.com"
   },
   "license": "MIT",
   "bugs": {
@@ -29,5 +29,9 @@
   "dependencies": {
     "jsonschema": "^1.0.0",
     "lodash": "^2.4.1"
+  },
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "mocha": "^2.0.1"
   }
 }

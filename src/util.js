@@ -17,6 +17,7 @@ function defineProperty(ctx, name, getter) {
         },
         configurable: true
     });
+    return ctx;
 }
 
 /**
@@ -28,6 +29,7 @@ function defineProperties(ctx, getters) {
     _.each(getters, function(getter, name) {
         defineProperty(ctx, name, getter);
     });
+    return ctx;
 }
 
 /**

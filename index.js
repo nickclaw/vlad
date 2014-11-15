@@ -1,1 +1,2 @@
-var vlad = module.exports = require('./src/vlad.js');
+module.exports = require('./src/vlad');
+module.exports.util = require('./src/util');
