@@ -87,7 +87,7 @@ function reduceSchema(memo, value, key) {
 function resolve(key, rule, value) {
     if (typeof rule === 'function') return rule(value);
 
-    if (value === undefined && rule.default) {
+    if (value === undefined) {
         value = rule.default;
     }
     var result = validate(value, rule);

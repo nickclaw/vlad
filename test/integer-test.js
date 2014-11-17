@@ -9,5 +9,4 @@ describe('integer property validation', function() {
     it('doesnt throw otherwise', function() {
         return validate(10).should.be.fulfilled;
     });
-
 });
