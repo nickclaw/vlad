@@ -1,19 +1,6 @@
 var util = require('./util');
 
-//
-// Base value setters
-//
 var property = {
-
-    /**
-     * Sets the default value of the property
-     * @param {*} value
-     */
-    default: function(value) {
-        this._default = value;
-        this._required = false;
-        return this;
-    },
 
     /**
      * Generates a valid jsonschema object from the property
@@ -36,9 +23,26 @@ var property = {
 
 
 //
+// Base value setters
+//
+util.defineSetters(property, {
+
+    /**
+     * Sets the default value of the property
+     * @param {*} value
+     */
+    default: function(value) {
+        this._default = value;
+        this._required = false;
+        return this;
+    }
+})
+
+
+//
 // Base flag setters
 //
-util.defineProperties(property, {
+util.defineGetters(property, {
 
     /**
      * Force the property to be required

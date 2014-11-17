@@ -36,7 +36,7 @@ function vlad(schema) {
     }
 }
 
-util.defineProperties(vlad, {
+util.defineGetters(vlad, {
     string: require('./types/string'),
     number: require('./types/number'),
     integer: require('./types/integer')

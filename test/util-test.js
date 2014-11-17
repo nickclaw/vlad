@@ -2,8 +2,8 @@ var util = vlad.util;
 
 describe('the src/util.js functions', function() {
 
-    describe('util.definePropert(y|ies)', function() {
-        var obj = util.defineProperties({}, {
+    describe('util.defineGetters', function() {
+        var obj = util.defineGetters({}, {
 
             testContext: function() {
                 expect(this).to.equal(obj);
@@ -29,6 +29,43 @@ describe('the src/util.js functions', function() {
 
         it('returns a value when the handler returns one', function() {
             expect(obj.testReturnValue).to.equal(2);
+        });
+    });
+
+    describe('util.defineSetters', function() {
+        var obj = util.defineSetters({}, {
+
+            testContext: function() {
+                expect(this).to.equal(obj);
+            },
+
+            testReturnSelf: function() {
+                var a = 1 + 1;
+            },
+
+            testReturnValue: function() {
+                return 1 + 1;
+            },
+
+            testArguments: function() {
+                return arguments.length;
+            }
+        });
+
+        it('sets context of handler correctly', function() {
+            obj.testContext();
+        });
+
+        it('returns the context when no value is returned from handler', function() {
+            expect(obj.testReturnSelf()).to.equal(obj);
+        });
+
+        it('returns a value when the handler returns one', function() {
+            expect(obj.testReturnValue()).to.equal(2);
+        });
+
+        it('gets any given arguments', function() {
+            expect(obj.testArguments(1, 2)).to.equal(2);
         });
     });
 
@@ -80,5 +117,4 @@ describe('the src/util.js functions', function() {
             });
         });
     });
-
 });

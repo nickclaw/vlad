@@ -21,16 +21,34 @@ function defineProperty(ctx, name, getter) {
 }
 
 /**
- * Define a bunch of properties at once
+ * Define a bunch of properties at once using the getter syntax
  * @param {*} ctx
  * @param {Object} getters
+ * @param ctx
  */
-function defineProperties(ctx, getters) {
+function defineGetters(ctx, getters) {
     _.each(getters, function(getter, name) {
         defineProperty(ctx, name, getter);
     });
     return ctx;
 }
+
+/**
+ * Define a bunch of properties at once using the setter syntax
+ * @param {*} ctx
+ * @param {Object} getters
+ * @return ctx
+ */
+function defineSetters(ctx, setters) {
+    _.each(setters, function(setter, name) {
+        ctx[name] = function() {
+            var result = setter.apply(this, arguments);
+            return result === undefined ? this : result;
+        }
+        ctx[name].name = ctx[name].displayname = name;
+    });
+    return ctx;
+};
 
 /**
  * Map an objects keys while maintaining values
@@ -87,7 +105,8 @@ function resolveObject(obj) {
 
 module.exports = {
     defineProperty: defineProperty,
-    defineProperties: defineProperties,
+    defineGetters: defineGetters,
+    defineSetters: defineSetters,
     keyMap: keyMap,
     resolveObject: resolveObject
 }
