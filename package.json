@@ -4,7 +4,7 @@
   "description": "JSON schema validation with a chainable syntax.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "./node_modules/.bin/mocha ./test/"
   },
   "repository": {
     "type": "git",

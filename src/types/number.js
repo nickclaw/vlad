@@ -2,7 +2,7 @@ var _ = require('lodash'),
     util = require('../util'),
     property = require('../property');
 
-var number = property.extend;
+var number = property.extend();
 
 //
 // Property value setters
@@ -47,6 +47,6 @@ util.defineProperties(number, {
 });
 
 module.exports = function createNumber() {
-    return number.extend;
+    return number.extend();
 };
 module.exports.property = number;

@@ -23,6 +23,14 @@ var property = {
         return util.keyMap(this, function(value, key) {
             if (key.indexOf('_') === 0) return key.slice(1);
         });
+    },
+
+    /**
+     * Returns an object that extends this object
+     * @return {Object}
+     */
+    extend: function() {
+        return Object.create(this);
     }
 };
 
@@ -45,10 +53,6 @@ util.defineProperties(property, {
      */
     strict: function() {
         this._strict = true;
-    },
-
-    extend: function() {
-        return Object.create(this);
     }
 });
 

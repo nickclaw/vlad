@@ -2,7 +2,7 @@ var _ = require('lodash'),
     util = require('../util'),
     property = require('../property');
 
-var string = property.extend;
+var string = property.extend();
 
 //
 // Property value setters
@@ -33,6 +33,6 @@ _.extend(string, {
 });
 
 module.exports = function createString() {
-    return string.extend;
+    return string.extend();
 };
 module.exports.property = string;
