@@ -15,16 +15,14 @@ describe('string property validation', function() {
 
     describe('minLength', function() {
 
-        var validate = vlad({
-            val: vlad.string.minLength(5)
-        });
+        var validate = vlad(vlad.string.minLength(5));
 
         it('throws when the string is too short', function() {
-            return validate({val: ''}).should.be.rejected;
+            return validate('').should.be.rejected;
         });
 
         it('doesnt throw otherwise', function() {
-            return validate({val: '12345'}).should.be.fulfilled;
+            return validate('12345').should.be.fulfilled;
         });
     });
 
