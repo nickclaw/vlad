@@ -3,13 +3,12 @@ var _ = require('lodash'),
     property = require('../property');
 
 var number = property.extend();
+number._type = 'number';
 
 //
 // Property value setters
 //
 util.defineSetters(number, {
-
-    _type: 'number',
 
     multipleOf: function(value) {
         this._multipleOf = value;

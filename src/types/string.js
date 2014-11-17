@@ -3,13 +3,12 @@ var _ = require('lodash'),
     property = require('../property');
 
 var string = property.extend();
+string._type = 'string';
 
 //
 // Property value setters
 //
 util.defineSetters(string, {
-
-    _type: 'string',
 
     maxLength: function(length) {
         this._maxLength = length;

@@ -1,31 +1,30 @@
 var util = require('./util');
 
-var property = {
+function Property() {}
 
-    /**
-     * Generates a valid jsonschema object from the property
-     * @return {Object}
-     */
-    toSchema: function() {
-        return util.keyMap(this, function(value, key) {
-            if (key.indexOf('_') === 0) return key.slice(1);
-        });
-    },
+/**
+ * Generates jsonschema object from property
+ * @return {Object}
+ */
+Property.prototype.toSchema = function toSchema() {
+    return util.keyMap(this, function(value, key) {
+        if (key.indexOf('_') === 0) return key.slice(1);
+    });
+}
 
-    /**
-     * Returns an object that extends this object
-     * @return {Object}
-     */
-    extend: function() {
-        return Object.create(this);
-    }
-};
+/**
+ * Return an object with this as a prototype
+ * @return {Object}
+ */
+Property.prototype.extend = function extend() {
+    return Object.create(this);
+}
 
 
 //
 // Base value setters
 //
-util.defineSetters(property, {
+util.defineSetters(Property.prototype, {
 
     /**
      * Sets the default value of the property
@@ -34,7 +33,6 @@ util.defineSetters(property, {
     default: function(value) {
         this._default = value;
         this._required = false;
-        return this;
     }
 })
 
@@ -42,7 +40,7 @@ util.defineSetters(property, {
 //
 // Base flag setters
 //
-util.defineGetters(property, {
+util.defineGetters(Property.prototype, {
 
     /**
      * Force the property to be required
@@ -60,4 +58,5 @@ util.defineGetters(property, {
     }
 });
 
-module.exports = property;
+module.exports = new Property();
+module.exports.Property = Property;

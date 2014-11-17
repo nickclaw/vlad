@@ -1,7 +1,8 @@
 var _ = require('lodash'),
     util = require('./util'),
     Promise = require('bluebird'),
-    validate = require('jsonschema').validate;
+    validate = require('jsonschema').validate,
+    Property = require('./property').Property;
 
 
 module.exports = vlad;
@@ -13,26 +14,36 @@ module.exports = vlad;
  * @return {Function}
  */
 function vlad(schema) {
+    var composite = true;
 
-    // Process the passed in schema into valid jsonschema.
-    // Simply calling the property.js objects toSchema function if
-    // it exists, otherwise assume that it is already valid schema
-    // or a 'vladitate' function
-    schema = _.reduce(schema, reduceSchema, {});
+    if (!schema) throw new Error("No schema.");
 
-    /**
-     * Validates the object based on the passed in schema
-     * @param {*} obj
-     * @return {Promise}
-     */
-    return function vladidate(obj, callback) {
-        var o = Object.create(null);
+    if (schema instanceof Property) {
+        composite = false;
+        schema = schema.toSchema();
+    } else {
+        // Process the passed in schema into valid jsonschema.
+        // Simply calling the property.js objects toSchema function if
+        // it exists, otherwise assume that it is already valid schema
+        // or a 'vladitate' function
+        schema = _.reduce(schema, reduceSchema, {});
+    }
 
-        for (key in schema) {
-            o[key] = resolve(key, schema[key], obj[key]);
+
+    if (composite) {
+        return function vladidate(obj) {
+            var o = Object.create(null);
+
+            for (key in schema) {
+                o[key] = resolve(key, schema[key], obj[key]);
+            }
+
+            return util.resolveObject(o);
         }
-
-        return util.resolveObject(o);
+    } else {
+        return function vladidate(val) {
+            return resolve('', schema, val);
+        }
     }
 }
 

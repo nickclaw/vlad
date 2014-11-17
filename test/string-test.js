@@ -2,16 +2,14 @@ describe('string property validation', function() {
 
     describe('maxLength', function() {
 
-        var validate = vlad({
-            val: vlad.string.maxLength(9)
-        });
+        var validate = vlad(vlad.string.maxLength(9));
 
         it('throws when the string is too long', function() {
-            return validate({val: '0123456789'}).should.be.rejected;
+            return validate('0123456789').should.be.rejected;
         });
 
         it('doesnt throw otherwise', function() {
-            return validate({val: ''}).should.be.fulfilled;
+            return validate('').should.be.fulfilled;
         });
     });
 
