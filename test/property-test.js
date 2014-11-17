@@ -1,5 +1,4 @@
-var expect = require('chai').expect,
-    property = require('../src/property');
+var property = require('../src/property');
 
 describe('property definition', function() {
 

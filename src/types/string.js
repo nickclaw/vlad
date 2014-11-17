@@ -23,6 +23,7 @@ _.extend(string, {
 
     pattern: function(pattern) {
         this._pattern = pattern;
+        return this;
     },
 
     within: function(min, max) {

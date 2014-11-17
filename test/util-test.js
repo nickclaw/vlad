@@ -1,6 +1,4 @@
-var expect = require('chai').expect,
-    util = require('../').util,
-    Promise = require('bluebird');
+var util = vlad.util;
 
 describe('the src/util.js functions', function() {
 
