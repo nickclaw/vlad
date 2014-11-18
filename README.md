@@ -1,4 +1,4 @@
-vlad
+vlad ![](https://travis-ci.org/nickclaw/vlad.svg)
 ------------------
 JSON schema validation with a chainable promise based syntax.
 
