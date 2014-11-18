@@ -14,23 +14,21 @@ module.exports = vlad;
  * @return {Function}
  */
 function vlad(schema) {
-    var composite = true;
-
     if (!schema) throw new Error("No schema.");
 
     if (schema instanceof Property) {
-        composite = false;
         schema = schema.toSchema();
+
+        return function vladidate(val) {
+            return resolve('', schema, val);
+        }
     } else {
         // Process the passed in schema into valid jsonschema.
         // Simply calling the property.js objects toSchema function if
         // it exists, otherwise assume that it is already valid schema
         // or a 'vladitate' function
         schema = _.reduce(schema, reduceSchema, {});
-    }
 
-
-    if (composite) {
         return function vladidate(obj) {
             var o = Object.create(null);
 
@@ -39,10 +37,6 @@ function vlad(schema) {
             }
 
             return util.resolveObject(o);
-        }
-    } else {
-        return function vladidate(val) {
-            return resolve('', schema, val);
         }
     }
 }
