@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/nickclaw/vlad",
   "dependencies": {
+    "bluebird": "^2.3.11",
     "jsonschema": "^1.0.0",
     "lodash": "^2.4.1"
   },
