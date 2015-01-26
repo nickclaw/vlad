@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     util = require('./util'),
+    error = require('./errors'),
     Promise = require('bluebird'),
     formats = require('tv4-formats'),
     validator = require('tv4').freshApi(),
@@ -104,9 +105,10 @@ function resolve(key, rule, value) {
     if (value === undefined) {
         value = rule.default;
     }
-    var result = validator.validateMultiple(value, rule);
-    if (result.errors.length) {
-        return Promise.reject(result.errors[0].message);
+
+    var result = validator.validateResult(value, rule);
+    if (result.error) {
+        return Promise.reject( new error.FieldValidationError(result.error.message));
     }
     return Promise.resolve(value);
 }

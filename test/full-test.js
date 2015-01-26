@@ -45,11 +45,27 @@ describe('validation stress test', function() {
         };
 
         return validate(obj).should.be.rejected
-        .then(function(errors) {
-            expect(errors.firstName).to.be.truthy;
-            expect(errors.lastName).to.be.truthy;
-            expect(errors.age).to.be.truthy;
-            expect(errors.score).to.be.truthy;
+        .then(function(error) {
+            expect(error.fields.firstName).to.be.truthy;
+            expect(error.fields.lastName).to.be.truthy;
+            expect(error.fields.age).to.be.truthy;
+            expect(error.fields.score).to.be.truthy;
+        });
+    });
+
+    it('rejects with an error', function() {
+        var obj = {
+            lastName: 'abcdefghijklmnopqrstuvwxyz',
+            age: 101,
+            score: 1
+        };
+
+        return validate(obj).should.be.rejected.then(function(err) {
+            expect(err).to.be.instanceof(vlad.GroupValidationError);
+            expect(err.fields.firstName).to.be.instanceof(vlad.FieldValidationError);
+            expect(err.fields.lastName).to.be.instanceof(vlad.FieldValidationError);
+            expect(err.fields.age).to.be.instanceof(vlad.FieldValidationError);
+            expect(err.fields.score).to.be.instanceof(vlad.FieldValidationError);
         });
     });
 });

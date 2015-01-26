@@ -1,4 +1,5 @@
 var _ = require('lodash'),
+    error = require('./errors'),
     Promise = require('bluebird');
 
 /**
@@ -98,7 +99,9 @@ function resolveObject(obj) {
             }
         });
 
-        return success ? Promise.resolve(resolved) : Promise.reject(rejected);
+        return success ?
+            Promise.resolve(resolved) :
+            Promise.reject(new error.GroupValidationError('Invalid object.', rejected));
     });
 }
 

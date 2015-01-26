@@ -103,17 +103,15 @@ describe('the src/util.js functions', function() {
             });
         });
 
-        it('correctly rejects the g(?)', function() {
+        it('shows only rejected errors', function() {
             return util.resolveObject({
                 a: Promise.reject('test'),
                 b: 'whoooo',
                 c: {then: function(res, rej) { return rej('test'); }}
-            }).then(function(obj) {
-                expect(obj).to.equal(undefined);
-            }).catch(function(obj) {
-                expect(obj.a).to.equal('test');
-                expect(obj.b).to.equal(undefined);
-                expect(obj.c).to.equal('test');
+            }).catch(function(err) {
+                expect(err.fields.a).to.equal('test');
+                expect(err.fields.b).to.equal(undefined);
+                expect(err.fields.c).to.equal('test');
             });
         });
     });
