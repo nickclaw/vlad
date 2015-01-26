@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     util = require('./util'),
     Promise = require('bluebird'),
-    validate = require('jsonschema').validate,
+    validator = require('tv4'),
     Property = require('./property').Property;
 
 
@@ -19,7 +19,7 @@ function vlad(schema) {
     if (schema instanceof Property) {
         schema = schema.toSchema();
 
-        return function vladidate(val) {
+        return function vladidateVal(val) {
             return resolve('', schema, val);
         }
     } else {
@@ -29,7 +29,7 @@ function vlad(schema) {
         // or a 'vladitate' function
         schema = _.reduce(schema, reduceSchema, {});
 
-        return function vladidate(obj) {
+        return function vladidateObj(obj) {
             var o = Object.create(null);
 
             for (key in schema) {
@@ -84,8 +84,9 @@ function resolve(key, rule, value) {
     if (value === undefined) {
         value = rule.default;
     }
-    var result = validate(value, rule);
-
-    if (result.errors.length) return Promise.reject(result.errors[0].message);
-    return Promise.resolve(result.instance);
+    var result = validator.validateMultiple(value, rule);
+    if (result.errors.length) {
+        return Promise.reject(result.errors[0].message);
+    }
+    return Promise.resolve(value);
 }
