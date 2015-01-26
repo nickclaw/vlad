@@ -93,15 +93,22 @@ function reduceSchema(memo, value, key) {
  * @param {Promise}
  */
 function resolve(rule, value) {
+
+    // if vladidate function, call it
     if (typeof rule === 'function') return rule(value);
 
-    if (value === undefined) {
-        value = rule.default;
-    }
+    // if no value and a default value was specified, use that and skip validation
+    if (value === undefined && rule.default !== undefined) return Promise.resolve(rule.default);
 
-    var result = validator.validateResult(value, rule);
-    if (result.error) {
-        return Promise.reject( new error.FieldValidationError(result.error.message));
+    var result = validator.validateMultiple(value, rule);
+    if (result.errors.length) {
+
+        // if catch is on, fall back on default or undefined
+        if (rule.catch)  {
+            return Promise.resolve(rule.default);
+        }
+
+        return Promise.reject( new error.FieldValidationError(result.errors[0].message));
     }
     return Promise.resolve(value);
 }

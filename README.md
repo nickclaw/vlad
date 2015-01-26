@@ -57,6 +57,10 @@ Lets you add in special string formats using more complex validation than regexe
 
 ## Property Types
 
+#### Base type
+* `property.default(value)` - value to default to (default value skips validation)
+* `property.catch` - catch all validation errors by making value equal to default (even if undefined)
+
 #### String type `vlad.string`
  * `vlad.string.maxLength(length)`
  * `vlad.string.minLength(length)`
@@ -69,7 +73,7 @@ Lets you add in special string formats using more complex validation than regexe
    * `url`
    * `credit-card-number`
    * `duration` (for example, P1DT12H for 1.5 days)
- * `vlad.string.within(maxLength, minLength)`
+ * `vlad.string.within(min, max)`
 
 #### Number types `vlad.number` / `vlad.integer`
  * `vlad.number.multipleOf(value)`

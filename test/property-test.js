@@ -11,14 +11,14 @@ describe('property definition', function() {
 
     it('should chain', function() {
         var prop = property.extend();
-        expect(prop.default().required.strict).to.equal(prop);
+        expect(prop.default().required.catch).to.equal(prop);
     });
 
     it('correctly parses schema', function() {
-        var schema = property.extend().required.strict.toSchema();
+        var schema = property.extend().required.catch.toSchema();
         expect(schema).to.deep.equal({
             required: true,
-            strict: true
+            catch: true
         });
     });
 });

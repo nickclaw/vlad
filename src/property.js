@@ -50,11 +50,12 @@ util.defineGetters(Property.prototype, {
     },
 
     /**
-     * Throw error if invalid value is passed
-     * instead of passing error
+     * Catch validation errors
+     * Will set value to whatever the default value is set to,
+     * even if that is undefined
      */
-    strict: function() {
-        this._strict = true;
+    catch: function() {
+        this._catch = true;
     }
 });
 

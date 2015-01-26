@@ -1,7 +1,7 @@
 describe('validation stress test', function() {
 
     var validate = vlad({
-        firstName: vlad.string.required.within(5, 15),
+        firstName: vlad.string.required.catch.within(5, 15),
         lastName: vlad.string.required.default('').maxLength(25),
 
         age: vlad.integer.required.min(18).max(100),
@@ -20,6 +20,15 @@ describe('validation stress test', function() {
         .then(function(value) {
             expect(value).to.deep.equal(obj);
             expect(value).to.not.equal(obj);
+        });
+    });
+
+    it('should require values by default', function() {
+        var obj = {};
+
+        return validate(obj).should.be.rejected
+        .then(function(err) {
+            expect(err.fields.age).to.be.instanceof(vlad.FieldValidationError);
         });
     });
 
@@ -46,10 +55,10 @@ describe('validation stress test', function() {
 
         return validate(obj).should.be.rejected
         .then(function(error) {
-            expect(error.fields.firstName).to.be.truthy;
-            expect(error.fields.lastName).to.be.truthy;
-            expect(error.fields.age).to.be.truthy;
-            expect(error.fields.score).to.be.truthy;
+            expect(error.fields.firstName).to.not.be.ok;
+            expect(error.fields.lastName).to.be.ok;
+            expect(error.fields.age).to.be.ok;
+            expect(error.fields.score).to.be.ok;
         });
     });
 
@@ -62,7 +71,7 @@ describe('validation stress test', function() {
 
         return validate(obj).should.be.rejected.then(function(err) {
             expect(err).to.be.instanceof(vlad.GroupValidationError);
-            expect(err.fields.firstName).to.be.instanceof(vlad.FieldValidationError);
+            expect(err.fields.firstName).to.undefined;
             expect(err.fields.lastName).to.be.instanceof(vlad.FieldValidationError);
             expect(err.fields.age).to.be.instanceof(vlad.FieldValidationError);
             expect(err.fields.score).to.be.instanceof(vlad.FieldValidationError);
