@@ -103,7 +103,7 @@ describe('the src/util.js functions', function() {
             });
         });
 
-        it('correctly rejects the g', function() {
+        it('correctly rejects the g(?)', function() {
             return util.resolveObject({
                 a: Promise.reject('test'),
                 b: 'whoooo',

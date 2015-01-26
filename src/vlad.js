@@ -5,9 +5,7 @@ var _ = require('lodash'),
     validator = require('tv4').freshApi(),
     Property = require('./property').Property;
 
-
 module.exports = vlad;
-vlad.addFormat = validator.addFormat;
 
 /**
  * vlad validator factory
@@ -68,6 +66,17 @@ vlad.enum = function createEnum(enums, def) {
 //
 // Formats
 //
+
+/**
+ * Adds one or more formats
+ * @param {String|Object}
+ * @param {Function}
+ * @return vlad
+ */
+vlad.addFormat = function() {
+    validator.addFormat.apply(validator, arguments);
+    return vlad;
+}
 
 vlad.addFormat(formats);
 
