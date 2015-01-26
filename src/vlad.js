@@ -21,7 +21,7 @@ function vlad(schema) {
         schema = schema.toSchema();
 
         return function vladidateVal(val) {
-            return resolve('', schema, val);
+            return resolve(schema, val);
         }
     } else {
         // Process the passed in schema into valid jsonschema.
@@ -34,7 +34,7 @@ function vlad(schema) {
             var o = Object.create(null);
 
             for (key in schema) {
-                o[key] = resolve(key, schema[key], obj[key]);
+                o[key] = resolve(schema[key], obj[key]);
             }
 
             return util.resolveObject(o);
@@ -52,16 +52,10 @@ util.defineGetters(vlad, {
     integer: require('./types/integer')
 });
 
-/**
- * Special case for enums
- * @param {Array} enums
- * @param {*=} def - default value (must be in enums)
- */
-vlad.enum = function createEnum(enums, def) {
-    return {
-        'enum': enums,
-        'default': def
-    };
+vlad.enum = function(enums) {
+    var prop = new Property();
+    prop._enum = enums;
+    return prop;
 }
 
 //
@@ -94,12 +88,11 @@ function reduceSchema(memo, value, key) {
 
 /**
  * Resolve a function or jsonschema to a promise
- * @param {String} key
  * @param {Function|Object} rule
  * @param {*} value
  * @param {Promise}
  */
-function resolve(key, rule, value) {
+function resolve(rule, value) {
     if (typeof rule === 'function') return rule(value);
 
     if (value === undefined) {

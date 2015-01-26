@@ -77,9 +77,8 @@ Lets you add in special string formats using more complex validation than regexe
  * `vlad.number.min(min)`
  * `vlad.number.within(min, max)`
 
-#### Enum `vlad.enum(options, default)`
+#### Enum `vlad.enum(options)`
  * `options` - array of possible values
- * `default` - optional value to default to
 
 ## Errors
 
