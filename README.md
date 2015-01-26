@@ -27,10 +27,17 @@ validate(obj).then(
         }*/
     },
     function(err) {
-        /*{
-            name: "is not type(s) string",
-            location: {
-                lat: "not 180"
+        /* GroupValidationError {
+            message: "Invalid object",
+            fields: {
+                name: FieldValidationError {message: '...'},
+                email: FieldValidationError {message: '...'},
+                location: GroupValidationError {
+                    message: 'Invalid object',
+                    fields: {
+                        long: FieldValidationError {message: '...'}
+                    }
+                }
             }
         }*/
     }
