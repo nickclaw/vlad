@@ -1,11 +1,13 @@
 var _ = require('lodash'),
     util = require('./util'),
     Promise = require('bluebird'),
-    validator = require('tv4'),
+    formats = require('tv4-formats'),
+    validator = require('tv4').freshApi(),
     Property = require('./property').Property;
 
 
 module.exports = vlad;
+vlad.addFormat = validator.addFormat;
 
 /**
  * vlad validator factory
@@ -41,6 +43,10 @@ function vlad(schema) {
     }
 }
 
+//
+// Types
+//
+
 util.defineGetters(vlad, {
     string: require('./types/string'),
     number: require('./types/number'),
@@ -59,6 +65,11 @@ vlad.enum = function createEnum(enums, def) {
     };
 }
 
+//
+// Formats
+//
+
+vlad.addFormat(formats);
 
 
 //

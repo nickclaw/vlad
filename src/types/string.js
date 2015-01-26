@@ -22,6 +22,10 @@ util.defineSetters(string, {
         this._pattern = pattern;
     },
 
+    format: function(format) {
+        this._format = format;
+    },
+
     within: function(min, max) {
         this._minLength = min;
         this._maxLength = max;
