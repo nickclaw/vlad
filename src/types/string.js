@@ -4,7 +4,6 @@ var _ = require('lodash'),
 
 var string = property.extend();
 string._type = 'string';
-
 //
 // Property value setters
 //

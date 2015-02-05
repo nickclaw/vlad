@@ -5,5 +5,5 @@ integer._type = 'integer';
 
 module.exports = function createInteger() {
     return integer.extend();
-}
+};
 module.exports.property = integer;

@@ -5,6 +5,10 @@ var _ = require('lodash'),
 var number = property.extend();
 number._type = 'number';
 
+number.parse = function parse(val) {
+    return parseFloat(val);
+};
+
 //
 // Property value setters
 //

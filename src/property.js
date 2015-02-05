@@ -10,7 +10,7 @@ Property.prototype.toSchema = function toSchema() {
     return util.keyMap(this, function(value, key) {
         if (key.indexOf('_') === 0) return key.slice(1);
     });
-}
+};
 
 /**
  * Return an object with this as a prototype
@@ -18,7 +18,16 @@ Property.prototype.toSchema = function toSchema() {
  */
 Property.prototype.extend = function extend() {
     return Object.create(this);
-}
+};
+
+/**
+ * Attempts to parse the object
+ * @param {*} val
+ * @return {*} - parsed val
+ */
+Property.prototype.parse = function(val) {
+    return val;
+};
 
 
 //
@@ -34,7 +43,7 @@ util.defineSetters(Property.prototype, {
         this._default = value;
         this._required = false;
     }
-})
+});
 
 
 //
@@ -46,7 +55,7 @@ util.defineGetters(Property.prototype, {
      * Force the property to be required
      */
     required: function() {
-        this._required = this._default === undefined
+        this._required = this._default === undefined;
     },
 
     /**

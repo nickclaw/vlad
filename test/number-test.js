@@ -55,5 +55,17 @@ describe('number property validation', function() {
         });
     });
 
+    describe('parsing strings to numbers', function() {
+        var validate = vlad(vlad.number);
+
+        it('throws when the value is not a number', function() {
+            return validate('hello').should.be.rejected;
+        });
+
+        it('correctly parses a string to a number', function() {
+            return validate('10.00001').should.be.fulfilled;
+        });
+    });
+
     // assume within works
 });

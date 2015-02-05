@@ -20,24 +20,26 @@ module.exports.middleware = middlewareWrapper;
 function vlad(schema) {
     if (!schema) throw new Error("No schema.");
 
+    var json;
+
     if (schema instanceof Property) {
-        schema = schema.toSchema();
+        json = schema.toSchema();
 
         return function vladidateVal(val) {
-            return resolve(schema, val);
+            return resolve(json, schema, val);
         };
     } else {
         // Process the passed in schema into valid jsonschema.
         // Simply calling the property.js objects toSchema function if
         // it exists, otherwise assume that it is already valid schema
         // or a 'vladitate' function
-        schema = _.reduce(schema, reduceSchema, {});
+        json = _.reduce(schema, reduceSchema, {});
 
         return function vladidateObj(obj) {
             var o = Object.create(null);
 
-            for (key in schema) {
-                o[key] = resolve(schema[key], obj[key]);
+            for (var key in json) {
+                o[key] = resolve(json[key], schema[key], obj[key]);
             }
 
             return util.resolveObject(o);
@@ -132,13 +134,25 @@ function reduceSchema(memo, value, key) {
  * @param {*} value
  * @param {Promise}
  */
-function resolve(rule, value) {
+function resolve(rule, schema, value) {
 
     // if vladidate function, call it
     if (typeof rule === 'function') return rule(value);
 
     // if no value and a default value was specified, use that and skip validation
     if (value === undefined && rule.default !== undefined) return Promise.resolve(rule.default);
+
+    // otherwise try parsing the value
+    try {
+        value = schema.parse(value);
+    } catch (e) {
+
+        if (rule.catch) {
+            return Promise.resolve(rule.default);
+        } else {
+            return Promise.reject(e);
+        }
+    }
 
     var result = validator.validateMultiple(value, rule);
     if (result.errors.length) {
