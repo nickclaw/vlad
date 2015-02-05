@@ -7,6 +7,9 @@ var _ = require('lodash'),
     Property = require('./property').Property;
 
 module.exports = vlad;
+module.exports.promise = vlad;
+module.exports.callback = callbackWrapper;
+module.exports.middleware = middlewareWrapper;
 
 /**
  * vlad validator factory
@@ -22,7 +25,7 @@ function vlad(schema) {
 
         return function vladidateVal(val) {
             return resolve(schema, val);
-        }
+        };
     } else {
         // Process the passed in schema into valid jsonschema.
         // Simply calling the property.js objects toSchema function if
@@ -38,8 +41,39 @@ function vlad(schema) {
             }
 
             return util.resolveObject(o);
-        }
+        };
     }
+}
+
+//
+// Wrapper functions
+//
+
+/**
+ * Returns a validation function that accepts
+ * a node callback rather than returning a promise
+ * @param {Object} schema
+ * @return {Function}
+ */
+function callbackWrapper(schema) {
+    var validate = vlad(schema);
+
+    return function(obj, callback) {
+        validate(obj).nodeify(callback);
+    };
+}
+
+/**
+ * Returns a express middleware validator
+ * Attempts to validate req.body (TODO make this customizable?)
+ * @param {Object} schema
+ * @return {Function} - middleware
+ */
+function middlewareWrapper(schema) {
+    var validate = callbackWrapper(schema);
+    return function(req, res, next) {
+        validate(req.body, next);
+    };
 }
 
 //
@@ -56,7 +90,7 @@ vlad.enum = function(enums) {
     var prop = new Property();
     prop._enum = enums;
     return prop;
-}
+};
 
 //
 // Formats
@@ -71,7 +105,7 @@ vlad.enum = function(enums) {
 vlad.addFormat = function() {
     validator.addFormat.apply(validator, arguments);
     return vlad;
-}
+};
 
 vlad.addFormat(formats);
 
