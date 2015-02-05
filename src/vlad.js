@@ -67,12 +67,18 @@ function callbackWrapper(schema) {
  * Returns a express middleware validator
  * Attempts to validate req.body (TODO make this customizable?)
  * @param {Object} schema
+ * @param {String} prop - e.g. 'query', 'body', 'params', 'path', 'method'
  * @return {Function} - middleware
  */
-function middlewareWrapper(schema) {
-    var validate = callbackWrapper(schema);
+function middlewareWrapper(schema, prop) {
+    var validate = vlad(schema);
+    prop || (prop = 'query');
+
     return function(req, res, next) {
-        validate(req.body, next);
+        validate(req[prop]).then(function(data) {
+            req[prop] = data;
+            next(null);
+        }, next);
     };
 }
 

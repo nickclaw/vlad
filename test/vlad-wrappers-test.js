@@ -2,8 +2,9 @@ describe('callback style validation', function() {
 
     var validate = vlad.callback({
         a: vlad.string,
-        b: vlad.number
-    });
+        b: vlad.number,
+        c: vlad.integer.default(10)
+    }, 'body');
 
     it("should accept a valid value", function(done) {
         validate({
@@ -13,6 +14,7 @@ describe('callback style validation', function() {
             expect(err).to.equal(null);
             expect(data.a).to.equal('test');
             expect(data.b).to.equal(1);
+            expect(data.c).to.equal(10);
             done();
         });
     });
@@ -35,8 +37,9 @@ describe('middleware style validation', function() {
 
     var validate = vlad.middleware({
         a: vlad.string,
-        b: vlad.number
-    });
+        b: vlad.number,
+        c: vlad.integer.default(10)
+    }, 'body');
 
     it("should accept a valid value", function(done) {
         var res = {},
@@ -46,6 +49,9 @@ describe('middleware style validation', function() {
 
         validate(req, res, function(err) {
             expect(err).to.equal(null);
+            expect(req.body.a).to.equal('test');
+            expect(req.body.b).to.equal(1);
+            expect(req.body.c).to.equal(10);
             done();
         });
     });
