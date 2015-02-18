@@ -45,10 +45,18 @@ util.defineSetters(array, {
         this._validator = validator;
     },
 
+    // aliases
+    minLength: function(min) {
+        this._min = min;
+    },
     min: function(min) {
         this._min = min;
     },
 
+    // aliases
+    maxLength: function(max) {
+        this._max = max;
+    },
     max: function(max) {
         this._max = max;
     }

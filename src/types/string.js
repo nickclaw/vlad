@@ -8,11 +8,19 @@ string._type = 'string';
 //
 util.defineSetters(string, {
 
+    // aliases
     maxLength: function(length) {
         this._maxLength = length;
     },
+    max: function(length) {
+        this._maxLength = length;
+    },
 
+    // aliases
     minLength: function(length) {
+        this._minLength = length;
+    },
+    min: function(length) {
         this._minLength = length;
     },
 

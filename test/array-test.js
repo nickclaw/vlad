@@ -33,30 +33,32 @@ describe('array property validation', function() {
 
     describe('validating array length', function() {
 
-        var validate = vlad(vlad.array.min(1).max(1));
+        // test min/max minLength/mathLength respectively
+        for (var i = 0, array = ["", "Length"]; i < array.length; i++) {
+            var validate = vlad(vlad.array['min' + array[i]](1)['max' + array[i]](1));
 
-        it('should accept any array when no type is defined', function() {
-            return validate([1]).should.be.fulfilled
-            .then(function(val) {
-                expect(val).to.deep.equal([1]);
+            it('should accept any array when no type is defined', function() {
+                return validate([1]).should.be.fulfilled
+                .then(function(val) {
+                    expect(val).to.deep.equal([1]);
+                });
             });
-        });
 
-        it('should throw when the array is too small', function() {
-            return validate([]).should.be.rejected
-            .then(function(err) {
-                expect(err).to.be.instanceof(vlad.FieldValidationError);
+            it('should throw when the array is too small', function() {
+                return validate([]).should.be.rejected
+                .then(function(err) {
+                    expect(err).to.be.instanceof(vlad.FieldValidationError);
+                });
             });
-        });
 
 
-        it('should throw when the array is too large', function() {
-            return validate([1,2]).should.be.rejected
-            .then(function(err) {
-                expect(err).to.be.instanceof(vlad.FieldValidationError);
+            it('should throw when the array is too large', function() {
+                return validate([1,2]).should.be.rejected
+                .then(function(err) {
+                    expect(err).to.be.instanceof(vlad.FieldValidationError);
+                });
             });
-        });
-
+        }
     });
 
 });
