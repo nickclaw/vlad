@@ -90,13 +90,14 @@ util.defineGetters(vlad, {
     string: require('./types/string'),
     number: require('./types/number'),
     integer: require('./types/integer'),
-    array: require('./types/array')
+    array: require('./types/array'),
+    boolean: require('./types/boolean')
 });
 
 /**
  * Creates a tv4 parseable enum property
  * has a different format than most properties
- * so it's created down here 
+ * so it's created down here
  *
  * @param {Array.<String>}
  * @return {Property}

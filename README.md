@@ -103,6 +103,9 @@ Lets you add in special string formats using more complex validation than regexe
  * `vlad.number.min(min)`
  * `vlad.number.within(min, max)`
 
+#### Boolean `vlad.boolean`
+ * no special options
+
 #### Enum `vlad.enum(options)`
  * `options` - array of possible values
 

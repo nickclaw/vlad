@@ -1,4 +1,5 @@
 var e = require('../errors'),
+    Promise = require('bluebird'),
     util = require('../util'),
     property = require('../property');
 
