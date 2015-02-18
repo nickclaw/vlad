@@ -93,9 +93,37 @@ util.defineGetters(vlad, {
     array: require('./types/array')
 });
 
+/**
+ * Creates a tv4 parseable enum property
+ * has a different format than most properties
+ * so it's created down here 
+ *
+ * @param {Array.<String>}
+ * @return {Property}
+ */
 vlad.enum = function(enums) {
     var prop = new Property();
     prop._enum = enums;
+    return prop;
+};
+
+/**
+ * Util validator for forcing a value to equal something
+ * only does a shallow comparison, so will not work on objects
+ *
+ * @param {*} value
+ * @param {String?} message - optional error message
+ * @return {Property}
+ */
+vlad.equals = function(value, message) {
+    var prop = new Property();
+    prop.validate = function(val) {
+        if (value !== val) {
+            return Promise.reject(new error.FieldValidationError(message || (val + " does not equal " + value + ".")));
+        } else {
+            return Promise.resolve(val);
+        }
+    };
     return prop;
 };
 
