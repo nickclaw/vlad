@@ -44,7 +44,9 @@ function defineSetters(ctx, setters) {
         ctx[name] = function() {
             var result = setter.apply(this, arguments);
             return result === undefined ? this : result;
-        }
+        };
+
+        // for debugging
         ctx[name].name = ctx[name].displayname = name;
     });
     return ctx;
@@ -132,6 +134,7 @@ module.exports = {
     defineSetters: defineSetters,
     keyMap: keyMap,
     resolveObject: resolveObject,
+    noop: function(){},
 
     // lodash replacements
     reduce: reduce,

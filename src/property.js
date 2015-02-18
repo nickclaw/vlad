@@ -73,7 +73,11 @@ util.defineGetters(Property.prototype, {
      */
     catch: function() {
         this._catch = true;
-    }
+    },
+
+    // chainables
+    and: util.noop,
+    has: util.noop
 });
 
 module.exports = new Property();

@@ -21,4 +21,10 @@ describe('property definition', function() {
             catch: true
         });
     });
+
+    it('can chain with useless variables', function() {
+        var schema = property.extend();
+
+        expect(schema.and.has).to.equal(schema);
+    });
 });
