@@ -1,5 +1,4 @@
-var _ = require('lodash'),
-    error = require('./errors'),
+var error = require('./errors'),
     Promise = require('bluebird');
 
 /**
@@ -28,7 +27,7 @@ function defineProperty(ctx, name, getter) {
  * @param ctx
  */
 function defineGetters(ctx, getters) {
-    _.each(getters, function(getter, name) {
+    each(getters, function(getter, name) {
         defineProperty(ctx, name, getter);
     });
     return ctx;
@@ -41,7 +40,7 @@ function defineGetters(ctx, getters) {
  * @return ctx
  */
 function defineSetters(ctx, setters) {
-    _.each(setters, function(setter, name) {
+    each(setters, function(setter, name) {
         ctx[name] = function() {
             var result = setter.apply(this, arguments);
             return result === undefined ? this : result;
@@ -76,16 +75,16 @@ function keyMap(ctx, fn) {
  * @return {Promise}
  */
 function resolveObject(obj) {
-    var values = _.values(obj),
-        keys = _.keys(obj);
+    var vals = values(obj),
+        keys = Object.keys(obj);
 
-    return Promise.settle(values).then(function(results) {
+    return Promise.settle(vals).then(function(results) {
         var rejected = {},
             resolved = {},
             success = true;
 
         // go over each promsei
-        _.each(results, function(result, i) {
+        results.forEach(function(result, i) {
 
             // if we haven't given up yet, add to resolved map
             if (success && result.isFulfilled()) {
@@ -105,11 +104,36 @@ function resolveObject(obj) {
     });
 }
 
+function reduce(obj, fn, memo) {
+    for (var key in obj) {
+        memo = fn(memo, obj[key], key);
+    }
+    return memo;
+}
+
+function each(obj, fn) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            fn(obj[key], key);
+        }
+    }
+}
+
+function values(obj) {
+    return reduce(obj, function(memo, val) {
+        memo.push(val);
+        return memo;
+    }, []);
+}
 
 module.exports = {
     defineProperty: defineProperty,
     defineGetters: defineGetters,
     defineSetters: defineSetters,
     keyMap: keyMap,
-    resolveObject: resolveObject
-}
+    resolveObject: resolveObject,
+
+    // lodash replacements
+    reduce: reduce,
+    each: each
+};

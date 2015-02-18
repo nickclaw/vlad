@@ -1,5 +1,4 @@
-var _ = require('lodash'),
-    util = require('../util'),
+var util = require('../util'),
     property = require('../property');
 
 var number = property.extend();

@@ -1,8 +1,6 @@
-var _ = require('lodash'),
-    util = require('./util'),
+var util = require('./util'),
     error = require('./errors'),
     Promise = require('bluebird'),
-    formats = require('tv4-formats'),
     validator = require('tv4').freshApi(),
     Property = require('./property').Property;
 
@@ -33,7 +31,7 @@ function vlad(schema) {
         // Simply calling the property.js objects toSchema function if
         // it exists, otherwise assume that it is already valid schema
         // or a 'vladitate' function
-        json = _.reduce(schema, reduceSchema, {});
+        json = util.reduce(schema, reduceSchema, {});
 
         return function vladidateObj(obj) {
             var o = Object.create(null);
@@ -114,8 +112,6 @@ vlad.addFormat = function() {
     validator.addFormat.apply(validator, arguments);
     return vlad;
 };
-
-vlad.addFormat(formats);
 
 
 //

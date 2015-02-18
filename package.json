@@ -29,9 +29,7 @@
   "dependencies": {
     "bluebird": "^2.3.11",
     "error-factory": "^0.1.4",
-    "lodash": "^2.4.1",
-    "tv4": "^1.1.9",
-    "tv4-formats": "^1.0.0"
+    "tv4": "^1.1.9"
   },
   "devDependencies": {
     "chai": "^1.10.0",
