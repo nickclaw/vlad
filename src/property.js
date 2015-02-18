@@ -29,6 +29,14 @@ Property.prototype.parse = function(val) {
     return val;
 };
 
+/**
+ * Validates the object
+ * Only implemented by properties that want to overwrite tv4 validation
+ * @param {Value}
+ * @returns {Promise}
+ */
+Property.prototype.validate = null;
+
 
 //
 // Base value setters

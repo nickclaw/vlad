@@ -150,8 +150,15 @@ function resolve(rule, schema, value) {
         }
     }
 
-    var result = validator.validateMultiple(value, rule);
-    if (result.errors.length) {
+    // validate with tv4 or special function
+    var result;
+    if (typeof schema.validate === 'function') {
+        return schema.validate(value);
+    } else {
+        result = validator.validateMultiple(value, rule);
+    }
+
+    if (result.errors && result.errors.length) {
 
         // if catch is on, fall back on default or undefined
         if (rule.catch)  {
