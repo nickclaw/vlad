@@ -89,7 +89,8 @@ function middlewareWrapper(schema, prop) {
 util.defineGetters(vlad, {
     string: require('./types/string'),
     number: require('./types/number'),
-    integer: require('./types/integer')
+    integer: require('./types/integer'),
+    array: require('./types/array')
 });
 
 vlad.enum = function(enums) {
