@@ -33,7 +33,7 @@ function vlad(schema) {
 
         return function vladidateFn(val) {
             return resolve(schema, null, val);
-        }
+        };
 
     // handle an object of validators
     } else {
@@ -64,7 +64,8 @@ util.defineGetters(vlad, {
     number: require('./types/number'),
     integer: require('./types/integer'),
     array: require('./types/array'),
-    boolean: require('./types/boolean')
+    boolean: require('./types/boolean'),
+    date: require('./types/date')
 });
 
 /**
@@ -154,14 +155,16 @@ function resolve(rule, schema, value) {
     if (value === undefined && rule.default !== undefined) return Promise.resolve(rule.default);
 
     // otherwise try parsing the value
-    try {
-        value = schema.parse(value);
-    } catch (e) {
+    if (typeof schema.parse === 'function') {
+        try {
+            value = schema.parse(value);
+        } catch (e) {
 
-        if (rule.catch) {
-            return Promise.resolve(rule.default);
-        } else {
-            return Promise.reject(e);
+            if (rule.catch) {
+                return Promise.resolve(rule.default);
+            } else {
+                return Promise.reject(e);
+            }
         }
     }
 

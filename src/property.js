@@ -25,9 +25,7 @@ Property.prototype.extend = function extend() {
  * @param {*} val
  * @return {*} - parsed val
  */
-Property.prototype.parse = function(val) {
-    return val;
-};
+Property.prototype.parse = null;
 
 /**
  * Validates the object

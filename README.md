@@ -1,6 +1,6 @@
 vlad ![](https://travis-ci.org/nickclaw/vlad.svg)
 ------------------
-JSON schema validation with a chainable promise based syntax.
+A simple asynchronous JSON validator with a chainable syntax.
 
 ```javascript
 var validate = vlad({
@@ -11,7 +11,9 @@ var validate = vlad({
     location: vlad({
         long: vlad.number.required.within(-180, 180),
         lat: vlad.number.required.within(-90, 90)
-    })
+    }),
+
+    property: vlad(customAsyncFunction)
 });
 
 validate(obj).then(
@@ -22,7 +24,9 @@ validate(obj).then(
             location: {
                 long: 70.235,
                 lat: 60.234
-            }
+            },
+
+            property: true
         }*/
     },
     function(err) {
@@ -36,7 +40,8 @@ validate(obj).then(
                     fields: {
                         long: FieldValidationError {message: '...'}
                     }
-                }
+                },
+                property: FieldValidationError {message: '...'}
             }
         }*/
     }
@@ -105,11 +110,11 @@ Lets you add in special string formats using more complex validation than regexe
 * `property.catch` - catch all validation errors by making value equal to default (even if undefined)
 
 #### String type `vlad.string`
- * `vlad.string.maxLength(length)`
- * `vlad.string.minLength(length)`
+ * `vlad.string.maxLength(length)` (or `.max(length)`)
+ * `vlad.string.minLength(length)` (or `.min(length)`)
+ * `vlad.string.within(min, max)`
  * `vlad.string.pattern(regex)`
  * `vlad.string.format(format)` - from formats added by `vlad.addFormat`
- * `vlad.string.within(min, max)`
 
 #### Number types `vlad.number` / `vlad.integer`
  * `vlad.number.multipleOf(value)`
@@ -117,8 +122,20 @@ Lets you add in special string formats using more complex validation than regexe
  * `vlad.number.min(min)`
  * `vlad.number.within(min, max)`
 
+#### Array `vlad.array`
+ * `vlad.array.min(length)` (or `.minLength(length)`)
+ * `vlad.array.max(length)` (or `.maxLength(length)`)
+ * `vlad.array.of(validator)`
+ ```javascript
+ var subType = vlad(vlad.string);
+ var validator = vlad(vlad.array.of(subType));
+ ```
+
 #### Boolean `vlad.boolean`
  * no special options
+
+#### Date `vlad.date`
+Will attempt to convert all values to a Date object
 
 #### Enum `vlad.enum(options)`
  * `options` - array of possible values
