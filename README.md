@@ -46,11 +46,25 @@ validate(obj).then(
 # API
 
 #### `vlad(schema)` or `vlad.promise(schema)`
-Takes in a property or object of properties, returns a validating function.
+A schema is a property, custom validation function, or an object of schema.
 
-This function takes in a value or object and returns a promise that either is resolved with the value (defaults added) or rejected with the corresponding error.
+```javascript
+// validate with a property
+var validatePropertyFn = vlad(vlad.string);
 
-These validation functions can be used in lieu of a Property, making it easy to validate nested objects (see example above).
+// validate with a sync/async custom function
+var validateCustomFn = vlad(function(val) {
+    // do custom validation
+    // return promise OR
+    // throw Error/return val
+});
+
+// validate an object of keys
+var validateObjectFn = vlad({
+    a: vlad.integer,
+    b: validateCustomFn
+});
+```
 
 #### `vlad.callback(schema)`
 Returns a validation function that takes in a callback as asecond argument rather

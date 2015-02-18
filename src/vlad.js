@@ -20,12 +20,22 @@ function vlad(schema) {
 
     var json;
 
+    // base case, handle a single property
     if (schema instanceof Property) {
         json = schema.toSchema();
 
         return function vladidateVal(val) {
             return resolve(json, schema, val);
         };
+
+    // handle a custom validation function
+    } else if (typeof schema === 'function') {
+
+        return function vladidateFn(val) {
+            return resolve(schema, null, val);
+        }
+
+    // handle an object of validators
     } else {
         // Process the passed in schema into valid jsonschema.
         // Simply calling the property.js objects toSchema function if
@@ -43,43 +53,6 @@ function vlad(schema) {
             return util.resolveObject(o);
         };
     }
-}
-
-//
-// Wrapper functions
-//
-
-/**
- * Returns a validation function that accepts
- * a node callback rather than returning a promise
- * @param {Object} schema
- * @return {Function}
- */
-function callbackWrapper(schema) {
-    var validate = vlad(schema);
-
-    return function(obj, callback) {
-        validate(obj).nodeify(callback);
-    };
-}
-
-/**
- * Returns a express middleware validator
- * Attempts to validate req.body (TODO make this customizable?)
- * @param {Object} schema
- * @param {String} prop - e.g. 'query', 'body', 'params', 'path', 'method'
- * @return {Function} - middleware
- */
-function middlewareWrapper(schema, prop) {
-    var validate = vlad(schema);
-    prop || (prop = 'query');
-
-    return function(req, res, next) {
-        validate(req[prop]).then(function(data) {
-            req[prop] = data;
-            next(null);
-        }, next);
-    };
 }
 
 //
@@ -162,8 +135,20 @@ function reduceSchema(memo, value, key) {
  */
 function resolve(rule, schema, value) {
 
-    // if vladidate function, call it
-    if (typeof rule === 'function') return rule(value);
+    // if function, handle it
+    if (typeof rule === 'function') {
+        try {
+            var result = rule(value);
+
+            // if it returns a promise just return that
+            if (typeof result.then === 'function') return result;
+
+            // resolve the value
+            return Promise.resolve(result);
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    }
 
     // if no value and a default value was specified, use that and skip validation
     if (value === undefined && rule.default !== undefined) return Promise.resolve(rule.default);
@@ -198,4 +183,42 @@ function resolve(rule, schema, value) {
         return Promise.reject( new error.FieldValidationError(result.errors[0].message));
     }
     return Promise.resolve(value);
+}
+
+
+//
+// Wrapper functions
+//
+
+/**
+ * Returns a validation function that accepts
+ * a node callback rather than returning a promise
+ * @param {Object} schema
+ * @return {Function}
+ */
+function callbackWrapper(schema) {
+    var validate = vlad(schema);
+
+    return function(obj, callback) {
+        validate(obj).nodeify(callback);
+    };
+}
+
+/**
+ * Returns a express middleware validator
+ * Attempts to validate req.body (TODO make this customizable?)
+ * @param {Object} schema
+ * @param {String} prop - e.g. 'query', 'body', 'params', 'path', 'method'
+ * @return {Function} - middleware
+ */
+function middlewareWrapper(schema, prop) {
+    var validate = vlad(schema);
+    prop || (prop = 'query');
+
+    return function(req, res, next) {
+        validate(req[prop]).then(function(data) {
+            req[prop] = data;
+            next(null);
+        }, next);
+    };
 }
