@@ -45,12 +45,41 @@ validate(obj).then(
 
 # API
 
-#### `vlad(schema)`
+#### `vlad(schema)` or `vlad.promise(schema)`
 Takes in a property or object of properties, returns a validating function.
 
 This function takes in a value or object and returns a promise that either is resolved with the value (defaults added) or rejected with the corresponding error.
 
 These validation functions can be used in lieu of a Property, making it easy to validate nested objects (see example above).
+
+#### `vlad.callback(schema)`
+Returns a validation function that takes in a callback as asecond argument rather
+then returning a promise.
+
+```javascript
+var validate = vlad.callback(schema);
+validate(obj, function(err, value) {
+    // do stuff
+});
+```
+
+#### `vlad.middleware(schema, prop)`
+Returns a validation function that can be used as a connect middleware.
+By default the validation function will attempt to validate req.query,
+but you can change that by passing in a property name to use for (e.g. body, param).
+
+```javascript
+var validate = vlad.middleware(schema);
+router.get('/path', validate, function(req, res) {
+    // handle req[prop]
+});
+
+// ...
+
+router.use(function(err, req, res, next) {
+    // handle 'err'
+});
+```
 
 #### `vlad.addFormat(name, handler)`
 Lets you add in special string formats using more complex validation than regexes. The handler function gets the current value and returns the error string if there was an error.
@@ -65,14 +94,7 @@ Lets you add in special string formats using more complex validation than regexe
  * `vlad.string.maxLength(length)`
  * `vlad.string.minLength(length)`
  * `vlad.string.pattern(regex)`
- * `vlad.string.format(format)` - format name
-   * `date` (YYYY-MM-DD)
-   * `date-time` (for example, 2014-05-02T12:59:29+00:00)
-   * `email`
-   * `uri`
-   * `url`
-   * `credit-card-number`
-   * `duration` (for example, P1DT12H for 1.5 days)
+ * `vlad.string.format(format)` - from formats added by `vlad.addFormat`
  * `vlad.string.within(min, max)`
 
 #### Number types `vlad.number` / `vlad.integer`
@@ -84,11 +106,19 @@ Lets you add in special string formats using more complex validation than regexe
 #### Enum `vlad.enum(options)`
  * `options` - array of possible values
 
+#### Equals `vlad.equals(value, message)`
+ * `value` - value it must equal
+ * `message` - optional error message
+
 ## Errors
 
 #### `vlad.FieldValidationError`
  * message
 
 #### `vlad.GroupValidationError`
+ * message
+ * fields (object of FieldValidationErrors)
+
+### `vlad.ArrayValidationError`
  * message
  * fields (object of FieldValidationErrors)
