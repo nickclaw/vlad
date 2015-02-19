@@ -75,7 +75,8 @@ util.defineGetters(Property.prototype, {
 
     // chainables
     and: util.noop,
-    has: util.noop
+    has: util.noop,
+    is: util.noop
 });
 
 module.exports = new Property();

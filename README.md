@@ -13,6 +13,7 @@ var validate = vlad({
         lat: vlad.number.required.within(-90, 90)
     }),
 
+    hello: vlad.any.required.default('world')
     property: vlad(customAsyncFunction)
 });
 
@@ -26,6 +27,7 @@ validate(obj).then(
                 lat: 60.234
             },
 
+            hello: "world",
             property: true
         }*/
     },
@@ -105,9 +107,11 @@ Lets you add in special string formats using more complex validation than regexe
 
 ## Property Types
 
-#### Base type
+#### Base type (inherited by all other types)
 * `property.default(value)` - value to default to (default value skips validation)
-* `property.catch` - catch all validation errors by making value equal to default (even if undefined)
+* `property.required` - force this value to not be `undefined`. Will fallback to default value if default value is set.
+* `property.catch` - catch all validation errors by making value equal to default (even if `undefined`)
+* `property.is`, `property.has`, `property.and` - filler words
 
 #### String type `vlad.string`
  * `vlad.string.maxLength(length)` (or `.max(length)`)
@@ -136,6 +140,9 @@ Lets you add in special string formats using more complex validation than regexe
 
 #### Date `vlad.date`
 Will attempt to convert all values to a Date object
+
+#### Any `vlad.any`
+Matches any data type.
 
 #### Enum `vlad.enum(options)`
  * `options` - array of possible values

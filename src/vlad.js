@@ -2,7 +2,8 @@ var util = require('./util'),
     error = require('./errors'),
     Promise = require('bluebird'),
     validator = require('tv4').freshApi(),
-    Property = require('./property').Property;
+    property = require('./property'),
+    Property = property.Property;
 
 module.exports = vlad;
 module.exports.promise = vlad;
@@ -65,7 +66,10 @@ util.defineGetters(vlad, {
     integer: require('./types/integer'),
     array: require('./types/array'),
     boolean: require('./types/boolean'),
-    date: require('./types/date')
+    date: require('./types/date'),
+    any: function() {
+        return property.extend();
+    }
 });
 
 /**
@@ -136,25 +140,37 @@ function reduceSchema(memo, value, key) {
  */
 function resolve(rule, schema, value) {
 
-    // if function, handle it
+    //
+    // Handle custom function
+    //
     if (typeof rule === 'function') {
         try {
-            var result = rule(value);
+            var res = rule(value);
 
             // if it returns a promise just return that
-            if (typeof result.then === 'function') return result;
+            if (typeof res.then === 'function') return res;
 
             // resolve the value
-            return Promise.resolve(result);
+            return Promise.resolve(res);
         } catch (e) {
             return Promise.reject(e);
         }
     }
 
-    // if no value and a default value was specified, use that and skip validation
-    if (value === undefined && rule.default !== undefined) return Promise.resolve(rule.default);
+    //
+    // Handle undefined values
+    //
+    if (value === undefined) {
+        if (rule.default !== undefined) return Promise.resolve(rule.default);
+        if (rule.required) {
+            if (rule.catch) return Promise.resolve(value);
+            return Promise.reject(new error.FieldValidationError("Field is required."));
+        }
+    }
 
-    // otherwise try parsing the value
+    //
+    // Handle parsing properties
+    //
     if (typeof schema.parse === 'function') {
         try {
             value = schema.parse(value);
@@ -168,14 +184,17 @@ function resolve(rule, schema, value) {
         }
     }
 
-    // validate with tv4 or special function
-    var result;
+    //
+    // Handle self validating property
+    //
     if (typeof schema.validate === 'function') {
         return schema.validate(value);
-    } else {
-        result = validator.validateMultiple(value, rule);
     }
 
+    //
+    // Fallback to tv4 validation
+    //
+    var result = validator.validateMultiple(value, rule);
     if (result.errors && result.errors.length) {
 
         // if catch is on, fall back on default or undefined
