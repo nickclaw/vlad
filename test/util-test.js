@@ -115,4 +115,21 @@ describe('the src/util.js functions', function() {
             });
         });
     });
+
+    describe('util.isObject', function() {
+        var objects = [{}, Object.create({}), Object.create(null)];
+        var notObjects = [1, 'test', null, undefined, [], Number(), String(), Math, function(){}];
+
+        objects.forEach(function(value) {
+            it('should accept', function() {
+                expect(util.isObject(value)).to.equal(true);
+            });
+        });
+
+        notObjects.forEach(function(value) {
+            it('should reject ' + value, function() {
+                expect(util.isObject(value)).to.equal(false);
+            });
+        });
+    });
 });

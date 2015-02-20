@@ -17,7 +17,7 @@ module.exports.middleware = middlewareWrapper;
  * @return {Function}
  */
 function vlad(schema) {
-    if (!schema) throw new Error("No schema.");
+    if (!schema) throw new error.SchemaFormatError("No schema provided.", schema);
 
     var json;
 
@@ -37,7 +37,7 @@ function vlad(schema) {
         };
 
     // handle an object of validators
-    } else {
+    } else if (util.isObject(schema)) {
         // Process the passed in schema into valid jsonschema.
         // Simply calling the property.js objects toSchema function if
         // it exists, otherwise assume that it is already valid schema
@@ -53,6 +53,8 @@ function vlad(schema) {
 
             return util.resolveObject(o);
         };
+    } else {
+        throw new error.SchemaFormatError("Invalid schema.", schema);
     }
 }
 
@@ -128,7 +130,10 @@ vlad.addFormat = function() {
 
 // Schema mapping function, so we don't create a new closure very time
 function reduceSchema(memo, value, key) {
-    memo[key] = typeof value.toSchema === 'function' ? value.toSchema() : value;
+    if (value instanceof Property) memo[key] = value.toSchema();
+    else if (typeof value === 'function') memo[key] = value;
+    else throw new error.SchemaFormatError("Invalid subschema.", value);
+
     return memo;
 }
 
@@ -144,17 +149,7 @@ function resolve(rule, schema, value) {
     // Handle custom function
     //
     if (typeof rule === 'function') {
-        try {
-            var res = rule(value);
-
-            // if it returns a promise just return that
-            if (typeof res.then === 'function') return res;
-
-            // resolve the value
-            return Promise.resolve(res);
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        return Promise.try(rule, [value]);
     }
 
     //
@@ -163,7 +158,7 @@ function resolve(rule, schema, value) {
     if (value === undefined) {
         if (rule.default !== undefined) return Promise.resolve(rule.default);
         if (rule.required) {
-            if (rule.catch) return Promise.resolve(value);
+            if (rule.catch) return Promise.resolve(rule.default);
             return Promise.reject(new error.FieldValidationError("Field is required."));
         }
     }

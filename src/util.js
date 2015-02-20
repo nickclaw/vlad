@@ -128,12 +128,22 @@ function values(obj) {
     }, []);
 }
 
+/**
+ * Checks for plain object
+ * @param {*} obj
+ * @return {Boolean}
+ */
+function isObject(obj) {
+    return Object.prototype.toString.call( obj ) === "[object Object]";
+}
+
 module.exports = {
     defineProperty: defineProperty,
     defineGetters: defineGetters,
     defineSetters: defineSetters,
     keyMap: keyMap,
     resolveObject: resolveObject,
+    isObject: isObject,
     noop: function(){},
 
     // lodash replacements

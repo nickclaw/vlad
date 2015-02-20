@@ -8,3 +8,6 @@ errorFactory('GroupValidationError', ['message', 'fields']);
 
 module.exports.ArrayValidationError =
 errorFactory('ArrayValidationError', ['message', 'fields']);
+
+module.exports.SchemaFormatError =
+errorFactory('SchemaFormatError', ['message', 'schema']);
