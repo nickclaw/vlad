@@ -29,7 +29,7 @@ array.validate = function(array) {
         for (var i = 0; i < results.length; i++) {
             if (results[i].isRejected()) {
                 errored = true;
-                errors["" + i] = new e.FieldValidationError(results[i].reason().message);
+                errors["" + i] = results[i].reason();
             }
         }
 
