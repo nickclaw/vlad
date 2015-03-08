@@ -171,7 +171,6 @@ function resolve(rule, schema, value) {
         try {
             value = schema.parse(value);
         } catch (e) {
-
             if (rule.catch) {
                 return Promise.resolve(rule.default);
             } else {
