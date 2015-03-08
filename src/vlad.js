@@ -161,6 +161,7 @@ function resolve(rule, schema, value) {
             if (rule.catch) return Promise.resolve(rule.default);
             return Promise.reject(new error.FieldValidationError("Field is required."));
         }
+        return Promise.resolve(value);
     }
 
     //
