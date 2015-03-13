@@ -28,6 +28,7 @@
   "homepage": "https://github.com/nickclaw/vlad",
   "dependencies": {
     "bluebird": "^2.3.11",
+    "error-factory": "git://github.com/yanickrochon/error-factory#extending-custom-errors",
     "tv4": "^1.1.9"
   },
   "devDependencies": {

@@ -1,20 +1,20 @@
-function extendError(name, fields, ParentError) {
-    var CustomError = function() {
-        ParentError.apply(this, arguments);
-        this.name = name;
-        for (var i = 0; i < fields.length; i++) {
-            this[fields[i]] = arguments[i];
-        }
-    };
-    CustomError.prototype = new ParentError();
-    CustomError.name = name;
-    return CustomError;
-}
+var errorFactory = require('error-factory');
 
-module.exports.ValidationError =
-extendError('ValidationError', ['message'], Error);
+var ValidationError = errorFactory('ValidationError', ['message']);
+var FieldValidationError = errorFactory('FieldValidationError', ['message'], ValidationError);
+var GroupValidationError = errorFactory('GroupValidationError', ['message', 'fields'], ValidationError);
+var ArrayValidationError = errorFactory('ArrayValidationError', ['message', 'fields'], GroupValidationError);
+var SchemaFormatError = errorFactory('ValidationError', ['message']);
 
-module.exports.ValidationError.prototype.toJSON = function() {
+module.exports = {
+    ValidationError: ValidationError,
+    FieldValidationError: FieldValidationError,
+    GroupValidationError: GroupValidationError,
+    ArrayValidationError: ArrayValidationError,
+    SchemaFormatError: SchemaFormatError
+};
+
+ValidationError.prototype.toJSON = function() {
 
     if (this.fields) {
         return reduce(this.fields, function(memo, field, key) {
@@ -26,17 +26,7 @@ module.exports.ValidationError.prototype.toJSON = function() {
     return this.message;
 };
 
-module.exports.FieldValidationError =
-extendError('FieldValidationError', [], module.exports.ValidationError);
 
-module.exports.GroupValidationError =
-extendError('GroupValidationError', ['message', 'fields'], module.exports.ValidationError);
-
-module.exports.ArrayValidationError =
-extendError('ArrayValidationError', [], module.exports.GroupValidationError);
-
-module.exports.SchemaFormatError =
-extendError('SchemaFormatError', ['message'], Error);
 
 function reduce(obj, fn, memo) {
     for (var key in obj) {

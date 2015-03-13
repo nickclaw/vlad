@@ -16,5 +16,5 @@ boolean.validate = function(value) {
 
 module.exports = function createBoolean() {
     return boolean.extend();
-}
+};
 module.exports.property = boolean;
