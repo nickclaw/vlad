@@ -161,6 +161,7 @@ function resolve(rule, schema, value) {
             if (rule.catch) return Promise.resolve(rule.default);
             return Promise.reject(new error.FieldValidationError("Field is required."));
         }
+        return Promise.resolve(value);
     }
 
     //
@@ -170,7 +171,6 @@ function resolve(rule, schema, value) {
         try {
             value = schema.parse(value);
         } catch (e) {
-
             if (rule.catch) {
                 return Promise.resolve(rule.default);
             } else {
@@ -224,18 +224,38 @@ function callbackWrapper(schema) {
 /**
  * Returns a express middleware validator
  * Attempts to validate req.body (TODO make this customizable?)
- * @param {Object} schema
  * @param {String} prop - e.g. 'query', 'body', 'params', 'path', 'method'
+ * @param {Object} schema
  * @return {Function} - middleware
  */
-function middlewareWrapper(schema, prop) {
+var middlewareWarn = warnOnce("vlad.middleware(schema[, prop]) has been deprecated. Use vlad.middleware([prop,] schema) instead");
+function middlewareWrapper(prop, schema) {
+    if (schema === undefined) {
+        schema = prop;
+        prop = 'query';
+    } else if (typeof schema === 'string') {
+        middlewareWarn();
+        var tmp = schema;
+        schema = prop;
+        prop = tmp;
+    }
+
     var validate = vlad(schema);
-    prop || (prop = 'query');
 
     return function(req, res, next) {
         validate(req[prop]).then(function(data) {
             req[prop] = data;
-            next(null);
+            next();
         }, next);
+    };
+}
+
+function warnOnce(message) {
+    var warned = false;
+    return function() {
+        if (!warned) {
+            warned = true;
+            console.warn(message);
+        }
     };
 }

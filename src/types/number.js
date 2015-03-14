@@ -1,11 +1,14 @@
 var util = require('../util'),
+    e = require('../errors'),
     property = require('../property');
 
 var number = property.extend();
 number._type = 'number';
 
 number.parse = function parse(val) {
-    return parseFloat(val);
+    var n = parseFloat(val);
+    if (n !== n) throw new vlad.FieldValidationError(val + " is not a number.");
+    return n;
 };
 
 //

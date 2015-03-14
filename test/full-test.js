@@ -5,7 +5,8 @@ describe('validation stress test', function() {
         lastName: vlad.string.required.default('').maxLength(25),
 
         age: vlad.integer.required.min(18).max(100),
-        score: vlad.number.multipleOf(5.5).default(11)
+        score: vlad.number.multipleOf(5.5).default(11),
+        text: vlad.integer
     });
 
     it('should return the validated values', function() {
@@ -13,7 +14,8 @@ describe('validation stress test', function() {
             firstName: 'Nicholas',
             lastName: 'Clawson',
             age: 21,
-            score: 16.5
+            score: 16.5,
+            text: undefined
         };
 
         return validate(obj).should.be.fulfilled
