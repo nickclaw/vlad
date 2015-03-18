@@ -59,7 +59,10 @@ describe('number property validation', function() {
         var validate = vlad(vlad.number);
 
         it('throws when the value is not a number', function() {
-            return validate('hello').should.be.rejected;
+            return validate('hello').should.be.rejected
+                .then(function(err) {
+                    expect(err).to.be.instanceof(vlad.FieldValidationError);
+                });
         });
 
         it('correctly parses a string to a number', function() {

@@ -7,7 +7,7 @@ number._type = 'number';
 
 number.parse = function parse(val) {
     var n = parseFloat(val);
-    if (n !== n) throw new vlad.FieldValidationError(val + " is not a number.");
+    if (n !== n) throw new e.FieldValidationError(val + " is not a number.");
     return n;
 };
 
