@@ -23,4 +23,18 @@ describe('boolean property validation', function() {
         });
     });
 
+    it('should be able to convert "true"', function() {
+        return validate('true').should.be.fulfilled
+            .then(function(val) {
+                expect(val).to.equal(true);
+            })
+    });
+
+    it('should be able to convert "false"', function() {
+        return validate('false').should.be.fulfilled
+            .then(function(val) {
+                expect(val).to.equal(false);
+            })
+    });
+
 });
