@@ -42,7 +42,13 @@ array.validate = function(array) {
 util.defineSetters(array, {
 
     of: function(validator) {
-        this._validator = validator;
+        if (validator instanceof property.Property) {
+            this._validator = require('../vlad')(validator);
+        } else if (typeof validator === 'function') {
+            this._validator = validator;
+        } else {
+            throw e.SchemaFormatError("array.of(validator) must be passed a vlad property or function.");
+        }
     },
 
     // aliases
