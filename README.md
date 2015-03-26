@@ -4,56 +4,56 @@ A simple asynchronous JSON validator with a chainable syntax.
 
 ```javascript
 var validate = vlad({
-    name: vlad.string.required,
-    age: vlad.integer.default(18),
-    email: vlad.string.format('email'),
-
+    email: vlad.string,
     location: vlad({
         long: vlad.number.required.within(-180, 180),
         lat: vlad.number.required.within(-90, 90)
-    }),
-
-    hello: vlad.any.required.default('world')
-    property: vlad(customAsyncFunction)
+    })
 });
 
-validate(obj).then(
-    function(value) {
-        /*{
-            name: "John Doe",
-            age: 20,
-            location: {
-                long: 70.235,
-                lat: 60.234
-            },
+//
+// Validate objects!
+//
 
-            hello: "world",
-            property: true
-        }*/
-    },
-    function(err) {
-        /* GroupValidationError {
-            message: "Invalid object",
-            fields: {
-                name: FieldValidationError {message: '...'},
-                email: FieldValidationError {message: '...'},
-                location: GroupValidationError {
-                    message: 'Invalid object',
-                    fields: {
-                        long: FieldValidationError {message: '...'}
-                    }
-                },
-                property: FieldValidationError {message: '...'}
+validate(validObject).then(function(value) {
+    /*{
+        email: "me@example.com",
+        location: {
+            long: 70.235,
+            lat: 60.234
+        }
+    }*/
+});
+
+validate(invalidObject).catch(function(err) {
+    /* GroupValidationError {
+        message: "Invalid object",
+        fields: {
+            email: FieldValidationError {message: '...'},
+            location: GroupValidationError {
+                message: 'Invalid object',
+                fields: {
+                    long: FieldValidationError {message: '...'}
+                }
             }
-        }*/
-    }
-);
+        }
+    }*/
+});
+
+//
+// Subvalidators!
+//
+
+validate.email(email).then(/* */);
+validate.location(loc).then(/* */);
+validate.location.longitude(long).then(/* */);
+
 ```
 
 # API
 
 #### `vlad(schema)` or `vlad.promise(schema)`
-A schema is a property, custom validation function, or an object of schema.
+A schema is a property, custom validation function, or an object of schema. __Has subvalidators!__
 
 ```javascript
 // validate with a property
@@ -63,19 +63,23 @@ var validatePropertyFn = vlad(vlad.string);
 var validateCustomFn = vlad(function(val) {
     // do custom validation
     // return promise OR
-    // throw Error/return val
+    // throw Error/return validated value
 });
 
 // validate an object of keys
 var validateObjectFn = vlad({
     a: vlad.integer,
-    b: validateCustomFn
+    b: validateCustomFn,
+    c: vlad({
+        d: vlad.string
+    })
 });
+
+validateObjectFn.c.d // exists
 ```
 
 #### `vlad.callback(schema)`
-Returns a validation function that takes in a callback as asecond argument rather
-then returning a promise.
+Returns a validation function that takes in a callback as a second argument rather then returning a promise. __No subvalidators!__
 
 ```javascript
 var validate = vlad.callback(schema);
@@ -84,15 +88,15 @@ validate(obj, function(err, value) {
 });
 ```
 
-#### `vlad.middleware(schema, prop)`
+#### `vlad.middleware([prop='query',] schema)`
 Returns a validation function that can be used as a connect middleware.
 By default the validation function will attempt to validate req.query,
-but you can change that by passing in a property name to use for (e.g. body, param).
+but you can change that by passing in a property name to use for (e.g. body, param). __No subvalidators!__
 
 ```javascript
-var validate = vlad.middleware(schema);
+var validate = vlad.middleware('query', schema);
 router.get('/path', validate, function(req, res) {
-    // handle req[prop]
+    // handle req.query
 });
 
 // ...
@@ -131,12 +135,13 @@ Lets you add in special string formats using more complex validation than regexe
  * `vlad.array.max(length)` (or `.maxLength(length)`)
  * `vlad.array.of(validator)`
  ```javascript
- var subType = vlad(vlad.string);
+ var subType = vlad(vlad.string); // or just `vlad.string`
  var validator = vlad(vlad.array.of(subType));
  ```
 
 #### Boolean `vlad.boolean`
  * no special options
+ * will automatically parse `"true"` and `"false"`
 
 #### Date `vlad.date`
 Will attempt to convert all values to a Date object
@@ -152,6 +157,10 @@ Matches any data type.
  * `message` - optional error message
 
 ## Errors
+
+#### `vlad.ValidationError`
+ * message
+ * `error.toJSON()` - returns a nice JSON representation of error.
 
 #### `vlad.FieldValidationError`
  * message
