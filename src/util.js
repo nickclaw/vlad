@@ -128,6 +128,17 @@ function values(obj) {
     }, []);
 }
 
+function extend(obj) {
+    for (var i = 1; i < arguments.length; i++) {
+        each(arguments[i], apply);
+    }
+    return obj;
+
+    function apply(value, key) {
+        obj[key] = value;
+    }
+}
+
 /**
  * Checks for plain object
  * @param {*} obj
@@ -148,5 +159,6 @@ module.exports = {
 
     // lodash replacements
     reduce: reduce,
-    each: each
+    each: each,
+    extend: extend
 };

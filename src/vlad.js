@@ -25,16 +25,17 @@ function vlad(schema) {
     if (schema instanceof Property) {
         json = schema.toSchema();
 
-        return function vladidateVal(val) {
+        return function(val) {
             return resolve(json, schema, val);
         };
 
     // handle a custom validation function
     } else if (typeof schema === 'function') {
 
-        return function vladidateFn(val) {
+        var vladidateFn = function(val) {
             return resolve(schema, null, val);
         };
+        return util.extend(vladidateFn, schema);
 
     // handle an object of validators
     } else if (util.isObject(schema)) {
@@ -44,15 +45,17 @@ function vlad(schema) {
         // or a 'vladitate' function
         json = util.reduce(schema, reduceSchema, {});
 
-        return function vladidateObj(obj) {
+        var vladidateObj = function(obj) {
             var o = Object.create(null);
 
             for (var key in json) {
-                o[key] = resolve(json[key], schema[key], obj[key]);
+                o[key] = json[key](obj[key]);
             }
 
             return util.resolveObject(o);
         };
+
+        return util.extend(vladidateObj, json);
     } else {
         throw new error.SchemaFormatError("Invalid schema.", schema);
     }
@@ -130,8 +133,8 @@ vlad.addFormat = function() {
 
 // Schema mapping function, so we don't create a new closure very time
 function reduceSchema(memo, value, key) {
-    if (value instanceof Property) memo[key] = value.toSchema();
-    else if (typeof value === 'function') memo[key] = value;
+    if (value instanceof Property) memo[key] = vlad(value);
+    else if (typeof value === 'function') memo[key] = vlad(value);
     else throw new error.SchemaFormatError("Invalid subschema.", value);
 
     return memo;
@@ -140,13 +143,14 @@ function reduceSchema(memo, value, key) {
 /**
  * Resolve a function or jsonschema to a promise
  * @param {Function|Object} rule
+ * @param {Property=} schema
  * @param {*} value
- * @param {Promise}
+ * @return {Promise}
  */
-function resolve(rule, schema, value) {
+function resolve(rule, schema, value, root) {
 
     //
-    // Handle custom function
+    // Handle function
     //
     if (typeof rule === 'function') {
         return Promise.try(rule, [value]);

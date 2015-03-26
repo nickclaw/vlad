@@ -132,4 +132,19 @@ describe('the src/util.js functions', function() {
             });
         });
     });
+
+    describe('util.extend', function() {
+
+        it('should extend the first object with the properties of the second object', function() {
+            var a = { a: 'a', b: 'a' },
+                b = { b: 'b', c: 'b' },
+                c = util.extend(a, b);
+
+            expect(c).to.have.keys('a', 'b', 'c');
+            expect(c.a).to.equal('a');
+            expect(c.b).to.equal('b');
+            expect(c.c).to.equal('b');
+        });
+
+    });
 });
