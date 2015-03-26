@@ -1,17 +1,17 @@
 # API Reference
 
 - [Creation](#creation)
-    - [`vlad(schema)`](#vlad)
-    - [`vlad.promise(schema)`](#vladpromise)
-    - [`vlad.callback(schema)`](#vladcallback)
-    - [`vlad.middleware([prop, ] schema)`](#vladmiddleware)
+    - [`vlad(schema)`](#vladschema---function)
+    - [`vlad.promise(schema)`](#vladpromiseschema---function)
+    - [`vlad.callback(schema)`](#vladcallbackschema---function)
+    - [`vlad.middleware([prop, ] schema)`](#vladmiddlewareprop-schema---function)
 - [Schema](#schema)
     - [Property](#property)
     - [Function](#function)
     - [Object](#object)
-- [Validation](#errors)
+- [Validation](#validation)
 - [Types](#types)
-    - [Base Property](#base_property)
+    - [Base Property](#base-property)
     - [`vlad.string`](#vladstring)
     - [`vlad.number`](#vladnumber)
     - [`vlad.integer`](#vladinteger)
@@ -20,10 +20,10 @@
     - [`vlad.array`](#vladarray)
     - [`vlad.enum`](#vladenum)
 - [Errors](#errors)
-    - [`vlad.ValidationError`](vladvalidationerror)
-    - [`vlad.FieldValidationError`](vladfieldvalidationerror)
-    - [`vlad.GroupValidationError`](vladgroupvalidationerror)
-    - [`vlad.ArrayValidationError`](vladarrayvalidationerror)
+    - [`vlad.ValidationError`](vladvalidationerrormessage)
+    - [`vlad.FieldValidationError`](vladfieldvalidationerrormessage)
+    - [`vlad.GroupValidationError`](vladgroupvalidationerrormessage-fields)
+    - [`vlad.ArrayValidationError`](vladarrayvalidationerrormessage-fields)
 
 ## Creation
 
