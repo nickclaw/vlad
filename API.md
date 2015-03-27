@@ -5,11 +5,12 @@
     - [`vlad.promise(schema)`](#vladpromiseschema---functionvalue)
     - [`vlad.callback(schema)`](#vladcallbackschema---functionvalue-callback)
     - [`vlad.middleware([prop, ] schema)`](#vladmiddlewareprop-schema---function-req-res-next)
+- [Validation](#validation)
+    - [Subvalidators](#subvalidators)
 - [Schema](#schema)
     - [Property](#property)
     - [Function](#function)
     - [Object](#object)
-- [Validation](#validation)
 - [Property Types](#property-types)
     - [Base Property](#base-property)
     - [`vlad.string`](#vladstring)
@@ -40,36 +41,72 @@ An alias for [`vlad(schema)`](#vladschema---function)
 ##### `vlad.callback(schema)` -> `function(value, callback)`
 Create a new validation function. This function will take in a value to validate and a node-style callback that must accept an error as the first argument and the validated value as the second arguments.
 
-```javascript
-var validate = vlad.callback(schema);
-validate(obj, function(err, value) {
-    // do stuff
-});
-```
-
 ##### `vlad.middleware([prop,] schema)` -> `function(req, res, next)`
 Create a new middleware styled function to validate a certain property on a request. By default the `prop` field will be `"query"`.
 
 This can be useful when parsing and normalizing basic queries in express, especially since vlad will automatically attempt to parse `"true"`, `"false"`, and numeric strings to their actual values.
 
+
+## Validation
+
+The three basic types of validation are by _promise_, _callback_, or _middleware_. Because vlad is based on [Bluebird](https://github.com/petkaantonov/bluebird) the _promise_ based syntax is the most powerful, with [subvalidators](#subvalidators) readily available.
+
 ```javascript
 
-router.get('/',
-    vlad.middleware('query', {
-        limit: vlad.integer.default(10).within(5, 15),
-        offset: vlad.integer.default(0).min(0)
-    }),
-    function(req, res, next) {
-        // GET /?limit=7
-        req.query.limit === 7;
-        req.query.offset === 0;
+// promise
+var validator = vlad(schema); // or vlad.promise(schema);
+validator(object)
+    .then(/* handle value */)
+    .catch(/* or handle error */);
+
+// callback
+var validator = vlad.callback(schema);
+validator(object, function(err, value) {
+    if (err) {
+        // handle error
+    } else {
+        // handle value
     }
-);
+});
+
+// middleware
+var validator = vlad.middleware('query', {
+    limit: vlad.integer.default(10).within(5, 15),
+    offset: vlad.integer.default(0).min(0)
+});
+
+router.get('/', validator, function(req, res, next) {
+    // GET /?limit=7
+    req.query.limit === 7;
+    req.query.offset === 0;
+});
 
 router.use(function(err, req, res, next) {
     // handle 'err'
 });
 
+```
+
+### Subvalidators
+Subbvalidators are only available through the promise syntax. They are easier to explain by example.
+
+```javascript
+var validate = vlad({
+    a: vlad({
+        nested: vlad({
+            path: vlad.string
+        })
+    })
+});
+
+// validate the whole object
+validate({a: {nested: {path: "hello world"}}}).then(/* */);
+
+// validate a subobject using a subvalidator
+validate.a.nested({path: "hello world"}).then(/* */);
+
+// validate specific field using a subvalidator
+validate.a.nested.path("hello world").then(/* */);
 ```
 
 ## Schema
@@ -111,8 +148,6 @@ var validator = vlad({
     })
 });
 ```
-
-## Validation
 
 ## Property Types
 
