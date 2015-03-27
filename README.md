@@ -2,6 +2,8 @@ vlad ![](https://travis-ci.org/nickclaw/vlad.svg)
 ------------------
 A simple asynchronous JSON validator with a chainable syntax.
 
+    npm install vlad
+
 ### Example
 
 ```javascript
