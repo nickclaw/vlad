@@ -50,7 +50,7 @@ validate(invalidObject).catch(function(err) {
 
 validate.email(email).then(/* */);
 validate.location(loc).then(/* */);
-validate.location.longitude(long).then(/* */);
+validate.location.long(longitude).then(/* */);
 
 ```
 
