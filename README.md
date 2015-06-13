@@ -6,6 +6,7 @@ A simple asynchronous JSON validator with a chainable syntax.
 
 ### Example
 
+#### Object Validation
 ```javascript
 var validate = vlad({
     email: vlad.string,
@@ -17,10 +18,6 @@ var validate = vlad({
     tags: vlad.array.of(vlad.string.within(3, 10))
 });
 
-//
-// Validate objects!
-//
-
 validate(validObject).then(function(value) {
     /*{
         email: "me@example.com",
@@ -31,6 +28,7 @@ validate(validObject).then(function(value) {
         tags: ['foo', 'bar']
     }*/
 });
+
 
 validate(invalidObject).catch(function(err) {
     /* GroupValidationError {
@@ -54,15 +52,37 @@ validate(invalidObject).catch(function(err) {
         }
     }*/
 });
+```
 
-//
-// Subvalidators!
-//
+#### Express Middleware
+```javascript
+router.post('/',
+    vlad.middleware('body', {
+        email: vlad.string.required.pattern(/.*@.*/)
+    }),
+    function(req, res) {
+        res.send(200);
+    }
+);
 
-validate.email(email).then(/* */);
-validate.location(loc).then(/* */);
-validate.location.long(longitude).then(/* */);
+router.use(function(err, req, res, next) {
+    if (err instanceof vlad.ValidationError) {
+        res.status(400).send(err.toJSON());
+    } else {
+        res.sendStatus(500);
+    }
+});
 
+```
+
+#### Subvalidators
+```javascript
+var validate = vlad({
+    field: vlad.string.required
+});
+
+validate({ field: 'hello world' }).then( /* handle */ );
+validate.field('hello world').then( /* handle */ )
 ```
 
 ## API Reference

@@ -226,7 +226,7 @@ var validator = vlad(vlad.array.of(subType));
 ##### `vlad.ArrayValidationError(message, fields)`
 * extends `GroupValidationError`
 * `err.message`
-* `err.fields` - object of `ValidationErrors`
+* `err.fields` - array of `ValidationErrors`
 
 ##### `vlad.SchemaFormatError(message)`
 * `err.message`
