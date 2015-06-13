@@ -65,6 +65,10 @@ describe('number property validation', function() {
                 });
         });
 
+        it('throws when the value isnt numeric', function() {
+            return validate('s100').should.be.rejected;
+        });
+
         it('correctly parses a string to a number', function() {
             return validate('10.00001').should.be.fulfilled;
         });
