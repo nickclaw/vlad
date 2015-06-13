@@ -12,8 +12,8 @@ describe('vlad validation errors', function() {
 
     });
 
-    describe('ValidationError.toJSON', function() {
-        it('should correctly validate into json', function() {
+    describe('serialization - toJSON', function() {
+        it('should correctly serialize into json', function() {
 
             var validator = vlad({
                 field: vlad.string,
@@ -75,6 +75,30 @@ describe('vlad validation errors', function() {
                 expect(json.group.subgroup.field).to.be.truthy;
                 expect(json.array['1'].subarray['0']).to.be.truthy;
             });
+        });
+    });
+
+    describe('deserialization', function() {
+        it('should correctly deserialize into an error', function() {
+
+            var error = vlad.ValidationError.fromJSON({
+                field: "Is terrible",
+                nested: {
+                    field: "Is also terrible",
+                    more_nested: {
+                        field: "Is more terrible"
+                    }
+                }
+            });
+
+            expect(error).to.be.instanceof(Error);
+            expect(error).to.be.instanceof(vlad.ValidationError);
+            expect(error.message).to.equal('Invalid object.');
+            expect(error.fields).to.have.keys(['field', 'nested']);
+            expect(error.fields.field.message).to.equal('Is terrible');
+            expect(error.fields.nested.message).to.equal('Invalid object.');
+            expect(error.fields.nested.fields).to.have.keys([ 'field', 'more_nested' ]);
+            expect(error.fields.nested.fields.more_nested.fields.field.message).to.equal('Is more terrible');
         });
     });
 });

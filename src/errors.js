@@ -14,6 +14,10 @@ module.exports = {
     SchemaFormatError: SchemaFormatError
 };
 
+//
+// (de)serialization
+//
+
 ValidationError.prototype.toJSON = function() {
 
     if (this.fields) {
@@ -26,7 +30,29 @@ ValidationError.prototype.toJSON = function() {
     return this.message;
 };
 
+ValidationError.fromJSON = function fromJSON(json) {
+    if (typeof json === "string") {
+        return new FieldValidationError(json);
+    } else {
+        return GroupValidationError.fromJSON(json);
+    }
+};
 
+FieldValidationError.fromJSON = function fromJSON(json) {
+    return FieldValidationError(json);
+}
+
+ArrayValidationError.fromJSON =
+GroupValidationError.fromJSON = function fromJSON(json) {
+    return GroupValidationError("Invalid object.", reduce(json, function(memo, value, key) {
+        memo[key] = ValidationError.fromJSON(value);
+        return memo;
+    }, {}))
+}
+
+//
+// Util
+//
 
 function reduce(obj, fn, memo) {
     for (var key in obj) {
