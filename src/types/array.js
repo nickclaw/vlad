@@ -20,23 +20,26 @@ array.validate = function(array) {
     }
 
     var validator = this._validator || Promise.resolve;
-    return Promise.settle(array.map(function(value) {
-        return validator(value);
-    })).then(function(results) {
-        var errors = {},
-            errored = false;
 
-        for (var i = 0; i < results.length; i++) {
-            if (results[i].isRejected()) {
-                errored = true;
-                errors["" + i] = results[i].reason();
-            }
-        }
+    return Promise.settle(array.map(validator))
+        .then(function(results) {
+            var errored = false,
+                success = [],
+                errors = [];
 
-        return errored ?
-            Promise.reject(new e.ArrayValidationError("Invalid array items", errors)) :
-            Promise.resolve(array);
-    });
+            results.forEach(function(result, i) {
+                if (result.isRejected()) {
+                    errored = true;
+                    errors[i] = result.reason();
+                } else {
+                    success[i] = result.value();
+                }
+            });
+
+            return errored ?
+                Promise.reject(new e.ArrayValidationError("Invalid array items", errors)) :
+                Promise.resolve(array);
+        });
 };
 
 util.defineSetters(array, {

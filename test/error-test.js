@@ -104,6 +104,19 @@ describe('vlad validation errors', function() {
             expect(error).to.be.instanceof(vlad.GroupValidationError);
         });
 
+        it('should deserialize an array into an ArrayValidationError', function() {
+            var error = vlad.ValidationError.fromJSON([
+                'Invalid field.',
+                undefined,
+                'Invalid field.'
+            ]);
+
+            expect(error).to.be.instanceof(vlad.ArrayValidationError);
+            expect(error.fields[0]).to.be.instanceof(vlad.FieldValidationError);
+            expect(error.fields[1]).to.be.undefined;
+            expect(error.fields[2]).to.be.instanceof(vlad.FieldValidationError);
+        });
+
         it('should correctly deserialize into an error', function() {
 
             var error = vlad.ValidationError.fromJSON({
@@ -113,14 +126,26 @@ describe('vlad validation errors', function() {
                     more_nested: {
                         field: "Is more terrible"
                     }
-                }
+                },
+                array: [
+                    "Equally bad.",
+                    {
+                        field: "Slightly more equally bad."
+                    }
+                ]
             });
 
             expect(error).to.be.instanceof(Error);
             expect(error).to.be.instanceof(vlad.ValidationError);
             expect(error.message).to.equal('Invalid object.');
-            expect(error.fields).to.have.keys(['field', 'nested']);
+            expect(error.fields).to.have.keys(['field', 'nested', 'array']);
             expect(error.fields.field.message).to.equal('Is terrible');
+            expect(error.fields.array).to.be.instanceof(vlad.ArrayValidationError);
+            expect(error.fields.array.message).to.equal("Invalid array.");
+            expect(error.fields.array.fields[0]).to.be.instanceof(vlad.FieldValidationError);
+            expect(error.fields.array.fields[1]).to.be.instanceof(vlad.GroupValidationError);
+            expect(error.fields.array.fields[1].message).to.equal("Invalid object.");
+            expect(error.fields.array.fields[1].fields.field.message).to.equal("Slightly more equally bad.");
             expect(error.fields.nested.message).to.equal('Invalid object.');
             expect(error.fields.nested.fields).to.have.keys([ 'field', 'more_nested' ]);
             expect(error.fields.nested.fields.more_nested.fields.field.message).to.equal('Is more terrible');

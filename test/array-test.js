@@ -25,10 +25,11 @@ describe('array property validation', function() {
                 return validate(['a', 1, [], {}]).should.be.rejected
                 .then(function(err) {
                     expect(err).to.be.instanceof(vlad.ArrayValidationError);
-                    expect(err.fields['0']).to.be.instanceof(vlad.FieldValidationError);
-                    expect(err.fields['1']).to.be.undefined;
-                    expect(err.fields['2']).to.be.instanceof(vlad.FieldValidationError);
-                    expect(err.fields['3']).to.be.instanceof(vlad.FieldValidationError);
+                    expect(err.fields).to.be.instanceof(Array);
+                    expect(err.fields[0]).to.be.instanceof(vlad.FieldValidationError);
+                    expect(err.fields[1]).to.be.undefined;
+                    expect(err.fields[2]).to.be.instanceof(vlad.FieldValidationError);
+                    expect(err.fields[3]).to.be.instanceof(vlad.FieldValidationError);
                 });
             });
         });
@@ -55,10 +56,11 @@ describe('array property validation', function() {
                 return validate(['a', 1, [], {}]).should.be.rejected
                 .then(function(err) {
                     expect(err).to.be.instanceof(vlad.ArrayValidationError);
-                    expect(err.fields['0']).to.be.instanceof(vlad.FieldValidationError);
-                    expect(err.fields['1']).to.be.undefined;
-                    expect(err.fields['2']).to.be.instanceof(vlad.FieldValidationError);
-                    expect(err.fields['3']).to.be.instanceof(vlad.FieldValidationError);
+                    expect(err.fields).to.be.instanceof(Array);
+                    expect(err.fields[0]).to.be.instanceof(vlad.FieldValidationError);
+                    expect(err.fields[1]).to.be.undefined;
+                    expect(err.fields[2]).to.be.instanceof(vlad.FieldValidationError);
+                    expect(err.fields[3]).to.be.instanceof(vlad.FieldValidationError);
                 });
             });
         });

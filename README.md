@@ -12,7 +12,9 @@ var validate = vlad({
     location: vlad({
         long: vlad.number.required.within(-180, 180),
         lat: vlad.number.required.within(-90, 90)
-    })
+    }),
+
+    tags: vlad.array.of(vlad.string.within(3, 10))
 });
 
 //
@@ -25,20 +27,29 @@ validate(validObject).then(function(value) {
         location: {
             long: 70.235,
             lat: 60.234
-        }
+        },
+        tags: ['foo', 'bar']
     }*/
 });
 
 validate(invalidObject).catch(function(err) {
     /* GroupValidationError {
-        message: "Invalid object",
+        message: "Invalid object.",
         fields: {
             email: FieldValidationError {message: '...'},
             location: GroupValidationError {
-                message: 'Invalid object',
+                message: 'Invalid object.',
                 fields: {
                     long: FieldValidationError {message: '...'}
                 }
+            },
+            tags: ArrayValidationError {
+                message: 'Invalid array.',
+                fields: [
+                    undefined,
+                    FieldValidationError {message: '...'},
+                    undefined
+                ]
             }
         }
     }*/

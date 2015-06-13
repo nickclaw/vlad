@@ -15,24 +15,35 @@ module.exports = {
 };
 
 //
-// (de)serialization
+// serialization
 //
 
 ValidationError.prototype.toJSON = function() {
-
-    if (this.fields) {
-        return reduce(this.fields, function(memo, field, key) {
-            memo[key] = field.toJSON();
-            return memo;
-        }, {});
-    }
-
-    return this.message;
+    return this.message; // works for FieldValidationError as well
 };
+
+GroupValidationError.prototype.toJSON = function() {
+    return reduce(this.fields, function(memo, value, key) {
+        memo[key] = value.toJSON();
+        return memo;
+    }, {});
+}
+
+ArrayValidationError.prototype.toJSON = function() {
+    return this.fields.map(function(value) {
+        if (value) return value.toJSON();
+    });
+}
+
+//
+// deserialization
+//
 
 ValidationError.fromJSON = function fromJSON(json) {
     if (typeof json === "string") {
         return new FieldValidationError(json);
+    } else if (Array.isArray(json)) {
+        return new ArrayValidationError.fromJSON(json);
     } else {
         return GroupValidationError.fromJSON(json);
     }
@@ -40,15 +51,20 @@ ValidationError.fromJSON = function fromJSON(json) {
 
 FieldValidationError.fromJSON = function fromJSON(json) {
     return FieldValidationError(json);
-}
+};
 
-ArrayValidationError.fromJSON =
 GroupValidationError.fromJSON = function fromJSON(json) {
     return GroupValidationError("Invalid object.", reduce(json, function(memo, value, key) {
         memo[key] = ValidationError.fromJSON(value);
         return memo;
     }, {}))
-}
+};
+
+ArrayValidationError.fromJSON = function fromJSON(json) {
+    return ArrayValidationError("Invalid array.", json.map(function(value) {
+        return value && ValidationError.fromJSON(value);
+    }));
+};
 
 //
 // Util
