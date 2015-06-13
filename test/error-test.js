@@ -13,6 +13,20 @@ describe('vlad validation errors', function() {
     });
 
     describe('serialization - toJSON', function() {
+
+        it('should correctly deserialize a FieldValidationError into a string', function() {
+            var res = new vlad.FieldValidationError("Invalid.").toJSON();
+            expect(res).to.equal("Invalid.");
+        });
+
+        it('should correctly deserialize a FieldValidationError into a string', function() {
+            var res = new vlad.GroupValidationError("Invalid object.", {
+                field: new vlad.FieldValidationError("Invalid.")
+            }).toJSON();
+
+            expect(res.field).to.equal('Invalid.');
+        });
+
         it('should correctly serialize into json', function() {
 
             var validator = vlad({
@@ -79,6 +93,17 @@ describe('vlad validation errors', function() {
     });
 
     describe('deserialization', function() {
+
+        it('should deserialize a string into a FieldValidationError', function() {
+            var error = vlad.ValidationError.fromJSON("Invalid field.");
+            expect(error).to.be.instanceof(vlad.FieldValidationError);
+        });
+
+        it('should deserialize an object into a GroupValidationError', function() {
+            var error = vlad.ValidationError.fromJSON({ field: "Invalid field." });
+            expect(error).to.be.instanceof(vlad.GroupValidationError);
+        });
+
         it('should correctly deserialize into an error', function() {
 
             var error = vlad.ValidationError.fromJSON({
