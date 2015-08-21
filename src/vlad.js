@@ -260,11 +260,11 @@ function syncWrapper(schema) {
     return function(value, callback) {
         var promise = validate(value);
         if (promise.sync) {
-            if (promise.error) return callback(promise.error);
-            return callback(null, promise.result);
+            if (promise.error) throw promise.error;
+            return promise.result;
         }
 
-        callback(error.SyncValidationError("Cannot synchronously validate an async schema."));
+        throw error.SyncValidationError("Cannot synchronously validate an async schema.");
     };
 }
 

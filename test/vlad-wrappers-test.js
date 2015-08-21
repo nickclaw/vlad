@@ -88,12 +88,31 @@ describe('middleware style validation', function() {
     });
 });
 
+describe('vlad.sync', function() {
 
+    it('should validate synchronously', function() {
 
+        var validate = vlad.sync(vlad.string.required);
 
+        try {
+            validate(null);
+            throw new Error();
+        } catch (e) {
+            expect(e).to.be.instanceOf(vlad.ValidationError)
+        }
     });
 
+    it('should throw an error if asynchronous', function() {
 
+        var validate = vlad.sync(function(){
+            return Promise.resolve('foo');
         });
 
+        try {
+            validate('bar');
+            throw new Error();
+        } catch (e) {
+            expect(e).to.be.instanceOf(vlad.SyncValidationError)
+        }
     });
+});

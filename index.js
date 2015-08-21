@@ -7,4 +7,5 @@ module.exports.ValidationError = errors.ValidationError;
 module.exports.FieldValidationError = errors.FieldValidationError;
 module.exports.GroupValidationError = errors.GroupValidationError;
 module.exports.ArrayValidationError = errors.ArrayValidationError;
+module.exports.SyncValidationError = errors.SyncValidationError;
 module.exports.SchemaFormatError = errors.SchemaFormatError;
