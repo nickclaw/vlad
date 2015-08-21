@@ -1,6 +1,7 @@
 var util = require('./util'),
     error = require('./errors'),
     Promise = require('bluebird'),
+    SyncPromise = require('./SyncPromise'),
     validator = require('tv4').freshApi(),
     property = require('./property'),
     Property = property.Property;
@@ -103,9 +104,9 @@ vlad.equals = function(value, message) {
     var prop = new Property();
     prop.validate = function(val) {
         if (value !== val) {
-            return Promise.reject(new error.FieldValidationError(message || (val + " does not equal " + value + ".")));
+            return SyncPromise.reject(new error.FieldValidationError(message || (val + " does not equal " + value + ".")));
         } else {
-            return Promise.resolve(val);
+            return SyncPromise.resolve(val);
         }
     };
     return prop;
@@ -145,7 +146,7 @@ function reduceSchema(memo, value, key) {
  * @param {Function|Object} rule
  * @param {Property=} schema
  * @param {*} value
- * @return {Promise}
+ * @return {Thennable}
  */
 function resolve(rule, schema, value, root) {
 
@@ -153,19 +154,19 @@ function resolve(rule, schema, value, root) {
     // Handle function
     //
     if (typeof rule === 'function') {
-        return Promise.try(rule, [value]);
+        return SyncPromise.try(rule, [value]);
     }
 
     //
     // Handle undefined values
     //
     if (value === undefined) {
-        if (rule.default !== undefined) return Promise.resolve(rule.default);
+        if (rule.default !== undefined) return SyncPromise.resolve(rule.default);
         if (rule.required) {
-            if (rule.catch) return Promise.resolve(rule.default);
-            return Promise.reject(new error.FieldValidationError("Field is required."));
+            if (rule.catch) return SyncPromise.resolve(rule.default);
+            return SyncPromise.reject(new error.FieldValidationError("Field is required."));
         }
-        return Promise.resolve(value);
+        return SyncPromise.resolve(value);
     }
 
     //
@@ -176,9 +177,9 @@ function resolve(rule, schema, value, root) {
             value = schema.parse(value);
         } catch (e) {
             if (rule.catch) {
-                return Promise.resolve(rule.default);
+                return SyncPromise.resolve(rule.default);
             } else {
-                return Promise.reject(e);
+                return SyncPromise.reject(e);
             }
         }
     }
@@ -198,12 +199,12 @@ function resolve(rule, schema, value, root) {
 
         // if catch is on, fall back on default or undefined
         if (rule.catch)  {
-            return Promise.resolve(rule.default);
+            return SyncPromise.resolve(rule.default);
         }
 
-        return Promise.reject( new error.FieldValidationError(result.errors[0].message));
+        return SyncPromise.reject( new error.FieldValidationError(result.errors[0].message));
     }
-    return Promise.resolve(value);
+    return SyncPromise.resolve(value);
 }
 
 
