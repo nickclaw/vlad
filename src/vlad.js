@@ -229,21 +229,14 @@ function callbackWrapper(schema) {
 
 /**
  * Returns a express middleware validator
- * Attempts to validate req.body (TODO make this customizable?)
  * @param {String} prop - e.g. 'query', 'body', 'params', 'path', 'method'
  * @param {Object} schema
  * @return {Function} - middleware
  */
-var middlewareWarn = warnOnce("vlad.middleware(schema[, prop]) has been deprecated. Use vlad.middleware([prop,] schema) instead");
 function middlewareWrapper(prop, schema) {
     if (schema === undefined) {
         schema = prop;
         prop = 'query';
-    } else if (typeof schema === 'string') {
-        middlewareWarn();
-        var tmp = schema;
-        schema = prop;
-        prop = tmp;
     }
 
     var validate = vlad(schema);

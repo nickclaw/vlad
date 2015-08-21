@@ -4,7 +4,7 @@ describe('callback style validation', function() {
         a: vlad.string,
         b: vlad.number,
         c: vlad.integer.default(10)
-    }, 'body');
+    });
 
     it("should accept a valid value", function(done) {
         validate({
@@ -88,56 +88,12 @@ describe('middleware style validation', function() {
     });
 });
 
-//
-// Testing deprecated version
-// Remove by version 0.12.0
-//
-describe('deprecated middleware style validation', function() {
-    var oldValidate = vlad.middleware({
-        a: vlad.string,
-        b: vlad.number,
-        c: vlad.integer.default(10)
-    }, 'body');
 
-    it("should accept a valid value", function(done) {
-        var res = {},
-            req = {
-                body: {a: 'test', b: 1}
-            };
 
-        oldValidate(req, res, function(err) {
-            expect(err).to.be.undefined;
-            expect(req.body.a).to.equal('test');
-            expect(req.body.b).to.equal(1);
-            expect(req.body.c).to.equal(10);
-            done();
-        });
+
     });
-    it("should reject an invalid value", function(done) {
-        var res = {},
-            req = {
-                body: {a: 1, b: 'test'}
-            };
 
-        oldValidate(req, res, function(err) {
-            expect(err).to.be.instanceof(vlad.GroupValidationError);
-            expect(err.fields.a).to.be.instanceof(vlad.FieldValidationError);
-            done();
-        });
-    });
-    it('should default to query', function(done) {
 
-        var validate = vlad.middleware({
-            a: vlad.string.default('test')
-        });
-
-        var req = {query: {}},
-            res = {};
-
-        validate(req, res, function() {
-            expect(req.query.a).to.equal('test');
-            done();
         });
 
     });
-})
