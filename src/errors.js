@@ -1,6 +1,7 @@
 var errorFactory = require('error-factory');
 
 var ValidationError = errorFactory('ValidationError', ['message']);
+var SyncValidationError = errorFactory('SyncValidationError', ['message'], ValidationError);
 var FieldValidationError = errorFactory('FieldValidationError', ['message'], ValidationError);
 var GroupValidationError = errorFactory('GroupValidationError', ['message', 'fields'], ValidationError);
 var ArrayValidationError = errorFactory('ArrayValidationError', ['message', 'fields'], GroupValidationError);
@@ -8,6 +9,7 @@ var SchemaFormatError = errorFactory('ValidationError', ['message']);
 
 module.exports = {
     ValidationError: ValidationError,
+    SyncValidationError: SyncValidationError,
     FieldValidationError: FieldValidationError,
     GroupValidationError: GroupValidationError,
     ArrayValidationError: ArrayValidationError,

@@ -10,6 +10,7 @@ module.exports = vlad;
 module.exports.promise = vlad;
 module.exports.callback = callbackWrapper;
 module.exports.middleware = middlewareWrapper;
+module.exports.sync = syncWrapper;
 
 /**
  * vlad validator factory
@@ -252,6 +253,25 @@ function middlewareWrapper(prop, schema) {
             req[prop] = data;
             next();
         }, next);
+    };
+}
+
+/**
+ * Returns a synchronously executing validation function
+ * @param {Object} schema
+ * @return {Function} - validator
+ */
+function syncWrapper(schema) {
+    var validate = vlad(schema);
+
+    return function(value, callback) {
+        var promise = validate(value);
+        if (promise.sync) {
+            if (promise.error) return callback(promise.error);
+            return callback(null, promise.result);
+        }
+
+        callback(error.SyncValidationError("Cannot synchronously validate an async schema."));
     };
 }
 
