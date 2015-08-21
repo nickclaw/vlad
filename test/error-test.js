@@ -8,6 +8,10 @@ describe('vlad validation errors', function() {
             expect(new vlad.GroupValidationError()).to.be.instanceof(vlad.ValidationError);
             expect(new vlad.ArrayValidationError()).to.be.instanceof(vlad.ValidationError);
             expect(new vlad.ArrayValidationError()).to.be.instanceof(vlad.GroupValidationError);
+            expect(new vlad.SyncValidationError).to.not.be.instanceof(vlad.ValidationError);
+            expect(new vlad.SyncValidationError).to.be.instanceof(Error);
+            expect(new vlad.SchemaFormatError).to.not.be.instanceof(vlad.ValidationError);
+            expect(new vlad.SchemaFormatError).to.be.instanceof(Error);
         });
 
     });
