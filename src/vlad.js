@@ -65,6 +65,28 @@ function vlad(schema) {
 // Types
 //
 
+/**
+ * Add a custom validator to vlad
+ * @param {String} name
+ * @param {Function|Property} validator
+ * @return {vlad}
+ */
+vlad.use = function(name, validator) {
+    // case: Property
+    if (validator instanceof Property)
+        util.defineProperty(vlad, name, validator.extend.bind(validator));
+
+    // case: Function
+    else if (typeof validator === 'function')
+        util.defineProperty(vlad, name, function() {
+            return validator
+        });
+
+    else throw error.SchemaFormatError("Could not add `" + name + "` validator, not an instance of Property or Function.");
+
+    return vlad;
+};
+
 util.defineGetters(vlad, {
     string: require('./types/string'),
     number: require('./types/number'),
