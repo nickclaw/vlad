@@ -1,6 +1,6 @@
 {
   "name": "vlad",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "JSON schema validation with a chainable syntax.",
   "main": "index.js",
   "scripts": {
@@ -34,6 +34,7 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "require-new": "^1.1.0"
   }
 }
