@@ -7,17 +7,14 @@ var array = property.extend();
 array._type = 'array';
 
 array.validate = function(array) {
-    if (!Array.isArray(array)) {
-        return Promise.reject(new e.FieldValidationError("Not an array."));
-    }
+    if (!Array.isArray(array))
+        throw e.FieldValidationError("Not an array.");
 
-    if (this._min !== undefined && array.length < this._min) {
-        return Promise.reject(new e.FieldValidationError("Array too short."));
-    }
+    if (this._min !== undefined && array.length < this._min)
+        throw e.FieldValidationError("Array too short.");
 
-    if (this._max !== undefined && array.length > this._max) {
-        return Promise.reject(new e.FieldValidationError("Array too long."));
-    }
+    if (this._max !== undefined && array.length > this._max)
+        throw e.FieldValidationError("Array too long.");
 
     var validator = this._validator || Promise.resolve;
 

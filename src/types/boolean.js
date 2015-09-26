@@ -12,18 +12,17 @@ boolean.parse = function(value) {
         case 'string':
             if (value === 'true') return true;
             if (value === 'false') return false;
-            break;      
+            break;
     }
 
     throw new e.FieldValidationError(value + " is not true or false.")
 }
 
 boolean.validate = function(value) {
-    if (typeof value !== 'boolean') {
-        return Promise.reject(new e.FieldValidationError("Not true or false."));
-    }
+    if (typeof value !== 'boolean')
+        throw e.FieldValidationError("Not true or false.");
 
-    return Promise.resolve(value);
+    return value;
 };
 
 module.exports = function createBoolean() {
