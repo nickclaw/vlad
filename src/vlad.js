@@ -211,7 +211,7 @@ function resolve(rule, schema, value, root) {
     // Handle self validating property
     //
     if (typeof schema.validate === 'function') {
-        return Promise.try(schema.validate, [value], schema);
+        return SyncPromise.try(schema.validate, [value], schema);
     }
 
     //
