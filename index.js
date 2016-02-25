@@ -1,4 +1,5 @@
-module.exports = require('./src/vlad');
+var vlad = module.exports = require('./src/vlad');
+module.exports.vlad = vlad;
 module.exports.util = require('./src/util');
 module.exports.property = require('./src/property');
 

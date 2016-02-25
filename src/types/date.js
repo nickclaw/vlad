@@ -15,10 +15,8 @@ date.parse = function(date) {
 }
 
 date.validate = function(date) {
-    return new Promise(function(res, rej) {
-        if (date !== date) return rej(new e.FieldValidationError("Not a valid date."));
-        res(date);
-    });
+    if (date !== date) throw e.FieldValidationError("Not a valid date.");
+    return date;
 }
 
 module.exports = function createDate() {

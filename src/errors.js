@@ -26,15 +26,19 @@ ValidationError.prototype.toJSON = function() {
 
 GroupValidationError.prototype.toJSON = function() {
     return reduce(this.fields, function(memo, value, key) {
-        memo[key] = value.toJSON();
+        memo[key] = toJSON(value);
         return memo;
     }, {});
 }
 
 ArrayValidationError.prototype.toJSON = function() {
     return this.fields.map(function(value) {
-        if (value) return value.toJSON();
+        if (value) return toJSON(value);
     });
+}
+
+function toJSON(err) {
+    return err.toJSON ? err.toJSON() : ( err.message || "Error" );
 }
 
 //
