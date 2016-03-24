@@ -1,10 +1,44 @@
-var errorFactory = require('error-factory');
+function ValidationError(message) {
+    if (!(this instanceof Error)) return new ValidationError(message);
+    this.name = 'ValidationError';
+    this.message = message;
+    this.stack = (new Error()).stack;
+}
+ValidationError.prototype = new Error();
 
-var ValidationError = errorFactory('ValidationError', ['message']);
-var FieldValidationError = errorFactory('FieldValidationError', ['message'], ValidationError);
-var GroupValidationError = errorFactory('GroupValidationError', ['message', 'fields'], ValidationError);
-var ArrayValidationError = errorFactory('ArrayValidationError', ['message', 'fields'], GroupValidationError);
-var SchemaFormatError = errorFactory('ValidationError', ['message']);
+function FieldValidationError(message) {
+    if (!(this instanceof Error)) return new FieldValidationError(message);
+    this.name = 'FieldValidationError';
+    this.message = message;
+    this.stack = (new Error()).stack;
+}
+FieldValidationError.prototype = new ValidationError();
+
+function GroupValidationError(message, fields) {
+    if (!(this instanceof Error)) return new GroupValidationError(message, fields);
+    this.name = 'GroupValidationError';
+    this.message = message;
+    this.fields = fields;
+    this.stack = (new Error()).stack;
+}
+GroupValidationError.prototype = new ValidationError();
+
+function ArrayValidationError(message, fields) {
+    if (!(this instanceof Error)) return new ArrayValidationError(message, fields);
+    this.name = 'ArrayValidationError';
+    this.message = message;
+    this.fields = fields;
+    this.stack = (new Error()).stack;
+}
+ArrayValidationError.prototype = new GroupValidationError();
+
+function SchemaFormatError(message) {
+    if (!(this instanceof Error)) return new SchemaFormatError(message);
+    this.name = 'SchemaFormatError';
+    this.message = message;
+    this.stack = (new Error()).stack;
+}
+SchemaFormatError.prototype = new Error();
 
 module.exports = {
     ValidationError: ValidationError,
