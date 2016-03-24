@@ -1,31 +1,28 @@
-var e = require('../errors'),
-    Promise = require('bluebird'),
-    util = require('../util'),
-    property = require('../property');
+import * as e from '../errors';
+import { Property } from '../property';
 
-var boolean = property.extend();
-boolean._type = 'boolean';
+export class Boolean extends Property {
+    _type = 'boolean';
 
-boolean.parse = function(value) {
-    switch(typeof value) {
-        case 'boolean': return value;
-        case 'string':
-            if (value === 'true') return true;
-            if (value === 'false') return false;
-            break;
+    parse(value) {
+        switch(typeof value) {
+            case 'boolean': return value;
+            case 'string':
+                if (value === 'true') return true;
+                if (value === 'false') return false;
+                break;
+            default: throw new e.FieldValidationError(value + ' is not true or false.');
+        }
     }
 
-    throw new e.FieldValidationError(value + " is not true or false.")
+    validate(value) {
+        if (typeof value !== 'boolean')
+            throw e.FieldValidationError('Not true or false.');
+
+        return value;
+    }
 }
 
-boolean.validate = function(value) {
-    if (typeof value !== 'boolean')
-        throw e.FieldValidationError("Not true or false.");
-
-    return value;
-};
-
-module.exports = function createBoolean() {
-    return boolean.extend();
-};
-module.exports.property = boolean;
+export default function createBoolean() {
+    return new Boolean();
+}

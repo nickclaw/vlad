@@ -1,9 +1,9 @@
-var number = require('./number').property;
+import { Number } from './number';
 
-var integer = number.extend();
-integer._type = 'integer';
+export class Integer extends Number {
+    _type = 'integer';
+}
 
-module.exports = function createInteger() {
-    return integer.extend();
-};
-module.exports.property = integer;
+export default function createInteger() {
+    return new Integer();
+}

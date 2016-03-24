@@ -1,53 +1,44 @@
-var util = require('../util'),
-    e = require('../errors'),
-    property = require('../property');
+import * as e from '../errors';
+import { Property } from '../property';
+import { defineGetters, defineSetters } from '../util';
 
-var number = property.extend();
-number._type = 'number';
+export class Number extends Property {
+    _type = 'number';
 
-number.parse = function parse(val) {
-    var n = parseFloat(val);
-    if (n !== n) throw new e.FieldValidationError(val + " is not a number.");
-    return n;
-};
-
-//
-// Property value setters
-//
-util.defineSetters(number, {
-
-    multipleOf: function(value) {
-        this._multipleOf = value;
-    },
-
-    max: function(max) {
-        this._maximum = max;
-    },
-
-    min: function(min) {
-        this._minimum = min;
-    },
-
-    within: function(min, max) {
-        this._minimum = min;
-        this._maximum = max;
+    parse(val) {
+        var n = parseFloat(val);
+        if (n !== n) throw new e.FieldValidationError(val + ' is not a number.');
+        return n;
     }
 
-});
+    multipleOf(value) {
+        this._multipleOf = value;
+        return this;
+    }
 
-//
-// Property flag setters
-//
-util.defineGetters(number, {
+    max(max) {
+        this._maximum = max;
+        return this;
+    }
 
-    exclusive: function() {
+    min(min) {
+        this._minimum = min;
+        return this;
+    }
+
+    within(min, max) {
+        this._minimum = min;
+        this._maximum = max;
+        return this;
+    }
+
+    get exclusive() {
         this._exclusiveMaximum = true;
         this._exclusiveMinimum = true;
+        return this;
     }
+}
 
-});
-
-module.exports = function createNumber() {
-    return number.extend();
-};
-module.exports.property = number;
+export default function createNumber() {
+    return new Number();
+}

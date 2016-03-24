@@ -1,116 +1,68 @@
-function ValidationError(message) {
-    if (!(this instanceof Error)) return new ValidationError(message);
-    this.name = 'ValidationError';
-    this.message = message;
-    this.stack = (new Error()).stack;
-}
-ValidationError.prototype = new Error();
-
-function FieldValidationError(message) {
-    if (!(this instanceof Error)) return new FieldValidationError(message);
-    this.name = 'FieldValidationError';
-    this.message = message;
-    this.stack = (new Error()).stack;
-}
-FieldValidationError.prototype = new ValidationError();
-
-function GroupValidationError(message, fields) {
-    if (!(this instanceof Error)) return new GroupValidationError(message, fields);
-    this.name = 'GroupValidationError';
-    this.message = message;
-    this.fields = fields;
-    this.stack = (new Error()).stack;
-}
-GroupValidationError.prototype = new ValidationError();
-
-function ArrayValidationError(message, fields) {
-    if (!(this instanceof Error)) return new ArrayValidationError(message, fields);
-    this.name = 'ArrayValidationError';
-    this.message = message;
-    this.fields = fields;
-    this.stack = (new Error()).stack;
-}
-ArrayValidationError.prototype = new GroupValidationError();
-
-function SchemaFormatError(message) {
-    if (!(this instanceof Error)) return new SchemaFormatError(message);
-    this.name = 'SchemaFormatError';
-    this.message = message;
-    this.stack = (new Error()).stack;
-}
-SchemaFormatError.prototype = new Error();
-
-module.exports = {
-    ValidationError: ValidationError,
-    FieldValidationError: FieldValidationError,
-    GroupValidationError: GroupValidationError,
-    ArrayValidationError: ArrayValidationError,
-    SchemaFormatError: SchemaFormatError
-};
-
-//
-// serialization
-//
-
-ValidationError.prototype.toJSON = function() {
-    return this.message; // works for FieldValidationError as well
-};
-
-GroupValidationError.prototype.toJSON = function() {
-    return reduce(this.fields, function(memo, value, key) {
-        memo[key] = toJSON(value);
-        return memo;
-    }, {});
-}
-
-ArrayValidationError.prototype.toJSON = function() {
-    return this.fields.map(function(value) {
-        if (value) return toJSON(value);
-    });
-}
+import transform from 'lodash/transform';
 
 function toJSON(err) {
-    return err.toJSON ? err.toJSON() : ( err.message || "Error" );
+    return err.toJSON ?
+        err.toJSON() :
+        (err.message || 'Error');
 }
 
-//
-// deserialization
-//
+export class ValidationError extends Error {
+    static fromJSON(json) {
+        if (typeof json === 'string') {
+            return FieldValidationError.fromJSON(json); // eslint-disable-line no-use-before-define
+        }
 
-ValidationError.fromJSON = function fromJSON(json) {
-    if (typeof json === "string") {
+        if (Array.isArray(json)) {
+            return ArrayValidationError.fromJSON(json); // eslint-disable-line no-use-before-define
+        }
+
+        return GroupValidationError.fromJSON(json); // eslint-disable-line no-use-before-define
+    }
+
+    toJSON() {
+        return this.message;
+    }
+}
+
+
+export class FieldValidationError extends ValidationError {
+    static fromJSON(json) {
         return new FieldValidationError(json);
-    } else if (Array.isArray(json)) {
-        return new ArrayValidationError.fromJSON(json);
-    } else {
-        return GroupValidationError.fromJSON(json);
+    };
+}
+
+
+export class GroupValidationError extends ValidationError {
+    static fromJSON(json) {
+        return GroupValidationError('Invalid object.', transform(json, (memo, value, key) => {
+            memo[key] = ValidationError.fromJSON(value);
+        }, {}));
+    };
+
+    constructor(message, fields) {
+        super(message);
+        this.fields = fields;
     }
-};
 
-FieldValidationError.fromJSON = function fromJSON(json) {
-    return FieldValidationError(json);
-};
-
-GroupValidationError.fromJSON = function fromJSON(json) {
-    return GroupValidationError("Invalid object.", reduce(json, function(memo, value, key) {
-        memo[key] = ValidationError.fromJSON(value);
-        return memo;
-    }, {}))
-};
-
-ArrayValidationError.fromJSON = function fromJSON(json) {
-    return ArrayValidationError("Invalid array.", json.map(function(value) {
-        return value && ValidationError.fromJSON(value);
-    }));
-};
-
-//
-// Util
-//
-
-function reduce(obj, fn, memo) {
-    for (var key in obj) {
-        memo = fn(memo, obj[key], key);
+    toJSON() {
+        return reduce(this.fields, function(memo, value, key) {
+            memo[key] = toJSON(value);
+            return memo;
+        }, {});
     }
-    return memo;
+}
+
+
+export class ArrayValidationError extends GroupValidationError {
+    static fromJSON(json) {
+        return ArrayValidationError('Invalid array.', json.map(function(value) {
+            return value && ValidationError.fromJSON(value);
+        }));
+    };
+
+    toJSON() {
+        return this.fields.map(function(value) {
+            if (value) return toJSON(value);
+        });
+    }
 }

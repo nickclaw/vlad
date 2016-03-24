@@ -1,44 +1,46 @@
-var util = require('../util'),
-    property = require('../property');
+import { Property } from '../property';
+import { defineSetters } from '../util';
 
-var string = property.extend();
-string._type = 'string';
-//
-// Property value setters
-//
-util.defineSetters(string, {
+export class String extends Property {
+    _type = 'string';
 
     // aliases
-    maxLength: function(length) {
+    maxLength(length) {
         this._maxLength = length;
-    },
-    max: function(length) {
+        return this;
+    }
+    max(length) {
         this._maxLength = length;
-    },
+        return this;
+    }
 
     // aliases
-    minLength: function(length) {
+    minLength(length) {
         this._minLength = length;
-    },
-    min: function(length) {
+        return this;
+    }
+    min(length) {
         this._minLength = length;
-    },
+        return this;
+    }
 
-    pattern: function(pattern) {
+    pattern(pattern) {
         this._pattern = pattern;
-    },
+        return this;
+    }
 
-    format: function(format) {
+    format(format) {
         this._format = format;
-    },
+        return this;
+    }
 
-    within: function(min, max) {
+    within(min, max) {
         this._minLength = min;
         this._maxLength = max;
+        return this;
     }
-});
+}
 
-module.exports = function createString() {
-    return string.extend();
+export default function createString() {
+    return new String();
 };
-module.exports.property = string;

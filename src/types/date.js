@@ -1,25 +1,23 @@
-var e = require('../errors'),
-    Promise = require('bluebird'),
-    util = require('../util'),
-    property = require('../property');
+import * as e from '../errors';
+import { Property } from '../property';
 
-var date = property.extend();
-date._type = 'date';
+export class _Date extends Property {
+    _type = 'date';
 
-date.parse = function(date) {
-    if ( !(date instanceof Date) ) {
-        date = new Date(date);
+    parse(date) {
+        if ( !(date instanceof Date) ) {
+            date = new Date(date);
+        }
+        if (date.getTime() !== date.getTime()) return NaN;
+        return date;
     }
-    if (date.getTime() !== date.getTime()) return NaN;
-    return date;
+
+    validate(date) {
+        if (date !== date) throw e.FieldValidationError('Not a valid date.');
+        return date;
+    }
 }
 
-date.validate = function(date) {
-    if (date !== date) throw e.FieldValidationError("Not a valid date.");
-    return date;
+export default function createDate() {
+    return new _Date();
 }
-
-module.exports = function createDate() {
-    return date.extend();
-}
-module.exports.property = date;

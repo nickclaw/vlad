@@ -2,9 +2,17 @@
   "name": "vlad",
   "version": "0.16.1",
   "description": "JSON schema validation with a chainable syntax.",
-  "main": "index.js",
+  "main": "lib/vlad.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha ./test/"
+    "build": "rm -rf lib && babel src --out-dir lib",
+    "lint": "eslint src",
+    "pretest": "npm run lint",
+    "test": "mocha test",
+    "prepublish": "in-publish && npm run test && npm run build || not-in-publish",
+    "publish:major": "npm version major && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:patch": "npm version patch && npm publish",
+    "postpublish": "git push origin master --tags"
   },
   "repository": {
     "type": "git",
@@ -27,13 +35,22 @@
   },
   "homepage": "https://github.com/nickclaw/vlad",
   "dependencies": {
-    "bluebird": "^3.3.4",
+    "lodash": "^4.5.1",
     "tv4": "^1.1.9"
   },
   "devDependencies": {
-    "chai": "^1.10.0",
-    "chai-as-promised": "^4.1.1",
-    "mocha": "^2.0.1",
-    "require-new": "^1.1.0"
+    "babel": "^6.3.26",
+    "babel-cli": "^6.4.5",
+    "babel-eslint": "^4.1.8",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "babel-register": "^6.4.3",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "eslint": "^1.10.3",
+    "eslint-config-airbnb": "^4.0.0",
+    "eslint-plugin-react": "^3.16.1",
+    "in-publish": "^2.0.0",
+    "mocha": "^2.4.5"
   }
 }

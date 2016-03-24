@@ -1,4 +1,4 @@
-describe('boolean property validation', function() {
+describe.only('boolean property validation', function() {
 
     var validate = vlad(vlad.boolean);
 
