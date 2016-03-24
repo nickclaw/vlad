@@ -1,4 +1,4 @@
-vlad ![](https://travis-ci.org/nickclaw/vlad.svg)
+vlad [![Build Status](https://travis-ci.org/nickclaw/vlad.svg?branch=master)](https://travis-ci.org/nickclaw/vlad)
 ------------------
 A simple asynchronous JSON validator with a chainable syntax.
 
