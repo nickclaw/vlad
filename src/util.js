@@ -80,7 +80,9 @@ function resolveObject(obj) {
     var vals = values(obj),
         keys = Object.keys(obj);
 
-    return Promise.settle(vals).then(function(results) {
+    return Promise.all(vals.map(function(val, key) {
+        return Promise.resolve(val).reflect();
+    })).then(function(results) {
         var rejected = {},
             resolved = {},
             success = true;
