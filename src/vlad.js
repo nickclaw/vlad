@@ -175,7 +175,9 @@ function resolve(rule, schema, value, root) {
     // Handle function
     //
     if (typeof rule === 'function') {
-        return Promise.try(rule, [value]);
+        return Promise.try(function() {
+            return rule(value);
+        });
     }
 
     //
@@ -209,7 +211,9 @@ function resolve(rule, schema, value, root) {
     // Handle self validating property
     //
     if (typeof schema.validate === 'function') {
-        return Promise.try(schema.validate, [value], schema);
+        return Promise.try(function() {
+            return schema.validate(value);
+        });
     }
 
     //
