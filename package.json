@@ -28,6 +28,7 @@
   "homepage": "https://github.com/nickclaw/vlad",
   "dependencies": {
     "bluebird": "^3.3.4",
+    "lodash": "^4.11.2",
     "tv4": "^1.1.9"
   },
   "devDependencies": {

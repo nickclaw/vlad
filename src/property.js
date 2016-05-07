@@ -31,7 +31,7 @@ Property.prototype.parse = null;
  * Validates the object
  * Only implemented by properties that want to overwrite tv4 validation
  * @param {Value}
- * @returns {Promise}
+ * @returns {Value}
  */
 Property.prototype.validate = null;
 

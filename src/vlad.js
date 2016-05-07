@@ -3,10 +3,12 @@ var util = require('./util'),
     Promise = require('bluebird'),
     validator = require('tv4').freshApi(),
     property = require('./property'),
-    Property = property.Property;
+    Property = property.Property,
+    each = require('lodash/each');
 
-module.exports = vlad;
-module.exports.promise = vlad;
+module.exports = promiseWrapper;
+module.exports.sync = vlad;
+module.exports.promise = promiseWrapper;
 module.exports.callback = callbackWrapper;
 module.exports.middleware = middlewareWrapper;
 
@@ -17,7 +19,7 @@ module.exports.middleware = middlewareWrapper;
  * @return {Function}
  */
 function vlad(schema) {
-    if (!schema) throw new error.SchemaFormatError("No schema provided.", schema);
+    if (!schema) throw error.SchemaFormatError("No schema provided.", schema);
 
     var json;
 
@@ -46,13 +48,24 @@ function vlad(schema) {
         json = util.reduce(schema, reduceSchema, {});
 
         var vladidateObj = function(obj) {
-            var o = Object.create(null);
+            var didFail = false;
+            var errs = {};
+            var vals = {};
 
-            for (var key in json) {
-                o[key] = json[key](obj[key]);
+            each(json, function(validator, key) {
+                try {
+                    vals[key] = validator(obj[key]);
+                } catch (e) {
+                    didFail = true;
+                    errs[key] = e;
+                }
+            }, {});
+
+            if (didFail) {
+                throw new error.GroupValidationError('Invalid object.', errs);
+            } else {
+                return vals;
             }
-
-            return util.resolveObject(o);
         };
 
         return util.extend(vladidateObj, json);
@@ -71,23 +84,27 @@ function vlad(schema) {
  * @param {Function|Property} validator
  * @return {vlad}
  */
-vlad.use = function(name, validator) {
+vlad.use = promiseWrapper.use = function(name, validator) {
     // case: Property
-    if (validator instanceof Property)
+    if (validator instanceof Property) {
         util.defineProperty(vlad, name, validator.extend.bind(validator));
+        util.defineProperty(promiseWrapper, name, validator.extend.bind(validator))
+    }
 
     // case: Function
-    else if (typeof validator === 'function')
-        util.defineProperty(vlad, name, function() {
-            return validator
-        });
+    else if (typeof validator === 'function') {
+        var fn = function() { return validator; };
+        util.defineProperty(vlad, name, fn);
+        util.defineProperty(promiseWrapper, name, fn);
+    }
 
     else throw error.SchemaFormatError("Could not add `" + name + "` validator, not an instance of Property or Function.");
 
     return vlad;
 };
 
-util.defineGetters(vlad, {
+
+var getters = {
     string: require('./types/string'),
     number: require('./types/number'),
     integer: require('./types/integer'),
@@ -97,7 +114,10 @@ util.defineGetters(vlad, {
     any: function() {
         return property.extend();
     }
-});
+};
+
+util.defineGetters(vlad, getters);
+util.defineGetters(promiseWrapper, getters);
 
 /**
  * Creates a tv4 parseable enum property
@@ -107,7 +127,7 @@ util.defineGetters(vlad, {
  * @param {Array.<String>}
  * @return {Property}
  */
-vlad.enum = function(enums) {
+vlad.enum = promiseWrapper.enum = function(enums) {
     var prop = new Property();
     prop._enum = enums;
     return prop;
@@ -121,13 +141,13 @@ vlad.enum = function(enums) {
  * @param {String?} message - optional error message
  * @return {Property}
  */
-vlad.equals = function(value, message) {
+vlad.equals = promiseWrapper.equals = function(value, message) {
     var prop = new Property();
     prop.validate = function(val) {
         if (value !== val) {
-            return Promise.reject(new error.FieldValidationError(message || (val + " does not equal " + value + ".")));
+            throw error.FieldValidationError(message || (val + " does not equal " + value + "."));
         } else {
-            return Promise.resolve(val);
+            return val;
         }
     };
     return prop;
@@ -143,7 +163,7 @@ vlad.equals = function(value, message) {
  * @param {Function}
  * @return vlad
  */
-vlad.addFormat = function() {
+vlad.addFormat = promiseWrapper.addFormat = function() {
     validator.addFormat.apply(validator, arguments);
     return vlad;
 };
@@ -167,42 +187,35 @@ function reduceSchema(memo, value, key) {
  * @param {Function|Object} rule
  * @param {Property=} schema
  * @param {*} value
- * @return {Promise}
+ * @throw {ValidationError}
+ * @return {Value}
  */
 function resolve(rule, schema, value, root) {
 
-    //
     // Handle function
-    //
     if (typeof rule === 'function') {
-        return Promise.try(function() {
-            return rule(value);
-        });
+        return util.tryFunction(rule, value);
     }
 
-    //
     // Handle undefined values
-    //
     if (value === undefined) {
-        if (rule.default !== undefined) return Promise.resolve(rule.default);
+        if (rule.default !== undefined) return rule.default;
         if (rule.required) {
-            if (rule.catch) return Promise.resolve(rule.default);
-            return Promise.reject(new error.FieldValidationError("Field is required."));
+            if (rule.catch) return rule.default;
+            throw error.FieldValidationError("Field is required.");
         }
-        return Promise.resolve(value);
+        return value;
     }
 
-    //
     // Handle parsing properties
-    //
     if (typeof schema.parse === 'function') {
         try {
             value = schema.parse(value);
         } catch (e) {
             if (rule.catch) {
-                return Promise.resolve(rule.default);
+                return rule.default;
             } else {
-                return Promise.reject(e);
+                throw e;
             }
         }
     }
@@ -211,9 +224,7 @@ function resolve(rule, schema, value, root) {
     // Handle self validating property
     //
     if (typeof schema.validate === 'function') {
-        return Promise.try(function() {
-            return schema.validate(value);
-        });
+        return util.tryFunction(schema.validate.bind(schema), value);
     }
 
     //
@@ -224,12 +235,12 @@ function resolve(rule, schema, value, root) {
 
         // if catch is on, fall back on default or undefined
         if (rule.catch)  {
-            return Promise.resolve(rule.default);
+            return rule.default;
         }
 
-        return Promise.reject( new error.FieldValidationError(result.errors[0].message));
+        throw new error.FieldValidationError(result.errors[0].message);
     }
-    return Promise.resolve(value);
+    return value;
 }
 
 
@@ -247,45 +258,62 @@ function callbackWrapper(schema) {
     var validate = vlad(schema);
 
     return function(obj, callback) {
-        validate(obj).nodeify(callback);
+        var val = obj;
+        var err = null;
+
+        try {
+            val = validate(obj);
+        } catch (e) {
+            err = e;
+        } finally {
+            setImmediate(callback, err, val);
+        }
     };
 }
 
 /**
+ * Returns a validation function that returns a promise
+ * @param {Object} schema
+ * @return {Function}
+ */
+function promiseWrapper(schema) {
+    var validate = vlad(schema);
+
+    var wrapper =  function(obj) {
+        return Promise.try(function() {
+            return validate(obj);
+        });
+    }
+
+    util.each(validate, function(fn, key) {
+        wrapper[key] = promiseWrapper(fn);
+    });
+    return wrapper;
+}
+
+/**
  * Returns a express middleware validator
- * Attempts to validate req.body (TODO make this customizable?)
  * @param {String} prop - e.g. 'query', 'body', 'params', 'path', 'method'
  * @param {Object} schema
  * @return {Function} - middleware
  */
-var middlewareWarn = warnOnce("vlad.middleware(schema[, prop]) has been deprecated. Use vlad.middleware([prop,] schema) instead");
 function middlewareWrapper(prop, schema) {
     if (schema === undefined) {
         schema = prop;
         prop = 'query';
-    } else if (typeof schema === 'string') {
-        middlewareWarn();
-        var tmp = schema;
-        schema = prop;
-        prop = tmp;
     }
 
     var validate = vlad(schema);
 
     return function(req, res, next) {
-        validate(req[prop]).then(function(data) {
-            req[prop] = data;
-            next();
-        }, next);
-    };
-}
+        var err = null;
 
-function warnOnce(message) {
-    var warned = false;
-    return function() {
-        if (!warned) {
-            warned = true;
-            console.warn(message);
+        try {
+            req[prop] = validate(req[prop]);
+        } catch(e) {
+            err = e;
+        } finally {
+            setImmediate(next, err);
         }
     };
 }

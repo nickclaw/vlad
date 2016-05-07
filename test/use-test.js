@@ -19,7 +19,7 @@ describe('using custom validators', function() {
         it('should successfully return an error', function() {
             var test = vlad.property.extend();
             test.validate = function() {
-                return Promise.reject('Error.');
+                throw 'Error.';
             };
             vlad.use('test', test);
 
@@ -30,7 +30,7 @@ describe('using custom validators', function() {
         it('should successfully validate', function() {
             var test = vlad.property.extend();
             test.validate = function() {
-                return Promise.resolve(true);
+                return true;
             };
             vlad.use('test', test);
 
@@ -53,26 +53,6 @@ describe('using custom validators', function() {
         it('should successfully validate', function() {
             vlad.use('test', function() {
                 return true;
-            });
-
-            var validate = vlad(vlad.test);
-            return validate('foo').should.be.resolved;
-        });
-    });
-
-    describe('that execute asynchronously', function() {
-        it('should successfully return an error', function() {
-            vlad.use('test', function() {
-                return Promise.reject('Error.');
-            });
-
-            var validate = vlad(vlad.test);
-            return validate('foo').should.be.rejected;
-        });
-
-        it('should successfully validate', function() {
-            vlad.use('test', function() {
-                return Promise.resolve(true);
             });
 
             var validate = vlad(vlad.test);

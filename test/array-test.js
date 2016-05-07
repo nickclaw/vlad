@@ -4,7 +4,7 @@ describe('array property validation', function() {
 
 
         describe('validation function as type', function() {
-            var subType = vlad(vlad.number);
+            var subType = vlad.sync(vlad.number);
             var validate = vlad(vlad.array.of(subType));
 
             it('should accept a valid value', function() {

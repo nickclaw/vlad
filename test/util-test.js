@@ -87,35 +87,6 @@ describe('the src/util.js functions', function() {
         });
     });
 
-    describe('util.resolveObject', function() {
-
-        it('correctly resolves an object of mixed keys', function() {
-            return util.resolveObject({
-                a: "test",
-                b: Promise.resolve('test'),
-                c: {then: function(res, rej) { return res('test'); }}
-            }).then(function(obj) {
-                expect(obj.a).to.equal('test');
-                expect(obj.b).to.equal('test');
-                expect(obj.c).to.equal('test');
-            }).catch(function(obj) {
-                expect(obj).to.equal(undefined);
-            });
-        });
-
-        it('shows only rejected errors', function() {
-            return util.resolveObject({
-                a: Promise.reject('test'),
-                b: 'whoooo',
-                c: {then: function(res, rej) { return rej('test'); }}
-            }).catch(function(err) {
-                expect(err.fields.a).to.equal('test');
-                expect(err.fields.b).to.equal(undefined);
-                expect(err.fields.c).to.equal('test');
-            });
-        });
-    });
-
     describe('util.isObject', function() {
         var objects = [{}, Object.create({}), Object.create(null)];
         var notObjects = [1, 'test', null, undefined, [], Number(), String(), Math, function(){}];

@@ -2,7 +2,12 @@ function ValidationError(message) {
     if (!(this instanceof Error)) return new ValidationError(message);
     this.name = 'ValidationError';
     this.message = message;
-    this.stack = (new Error()).stack;
+
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this);
+    } else {
+        this.stack = (new Error()).stack;
+    }
 }
 ValidationError.prototype = new Error();
 
@@ -10,7 +15,12 @@ function FieldValidationError(message) {
     if (!(this instanceof Error)) return new FieldValidationError(message);
     this.name = 'FieldValidationError';
     this.message = message;
-    this.stack = (new Error()).stack;
+
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this);
+    } else {
+        this.stack = (new Error()).stack;
+    }
 }
 FieldValidationError.prototype = new ValidationError();
 
@@ -19,7 +29,12 @@ function GroupValidationError(message, fields) {
     this.name = 'GroupValidationError';
     this.message = message;
     this.fields = fields;
-    this.stack = (new Error()).stack;
+
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this);
+    } else {
+        this.stack = (new Error()).stack;
+    }
 }
 GroupValidationError.prototype = new ValidationError();
 
@@ -28,7 +43,12 @@ function ArrayValidationError(message, fields) {
     this.name = 'ArrayValidationError';
     this.message = message;
     this.fields = fields;
-    this.stack = (new Error()).stack;
+
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this);
+    } else {
+        this.stack = (new Error()).stack;
+    }
 }
 ArrayValidationError.prototype = new GroupValidationError();
 
@@ -36,7 +56,12 @@ function SchemaFormatError(message) {
     if (!(this instanceof Error)) return new SchemaFormatError(message);
     this.name = 'SchemaFormatError';
     this.message = message;
-    this.stack = (new Error()).stack;
+
+    if (Error.captureStackTrace) {
+        Error.captureStackTrace(this);
+    } else {
+        this.stack = (new Error()).stack;
+    }
 }
 SchemaFormatError.prototype = new Error();
 

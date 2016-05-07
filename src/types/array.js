@@ -1,7 +1,7 @@
 var e = require('../errors'),
-    Promise = require('bluebird'),
     util = require('../util'),
-    property = require('../property');
+    property = require('../property'),
+    identity = require('lodash/identity');
 
 var array = property.extend();
 array._type = 'array';
@@ -16,35 +16,33 @@ array.validate = function(array) {
     if (this._max !== undefined && array.length > this._max)
         throw e.FieldValidationError("Array too long.");
 
-    var validator = this._validator || Promise.resolve;
+    var validator = this._validator || identity;
 
-    return Promise.all(array.map(function(val, key) {
-        return Promise.resolve(validator(val, key)).reflect();
-    })).then(function(results) {
-        var errored = false,
-            success = [],
-            errors = [];
+    var didFail = false;
+    var errs = new Array(array.length);
+    var vals = new Array(array.length);
 
-        results.forEach(function(result, i) {
-            if (result.isRejected()) {
-                errored = true;
-                errors[i] = result.reason();
-            } else {
-                success[i] = result.value();
-            }
-        });
+    array.forEach(function(val, key) {
+        try {
+            vals[key] = validator(val);
+        } catch (e) {
+            didFail = true;
+            errs[key] = e;
+        }
+    }, {});
 
-        return errored ?
-            Promise.reject(new e.ArrayValidationError("Invalid array items", errors)) :
-            Promise.resolve(array);
-    });
+    if (didFail) {
+        throw new e.ArrayValidationError('Invalid array.', errs);
+    } else {
+        return vals;
+    }
 };
 
 util.defineSetters(array, {
 
     of: function(validator) {
         if (validator instanceof property.Property) {
-            this._validator = require('../vlad')(validator);
+            this._validator = require('../vlad').sync(validator);
         } else if (typeof validator === 'function') {
             this._validator = validator;
         } else {

@@ -31,18 +31,18 @@ describe('vlad validation errors', function() {
 
             var validator = vlad({
                 field: vlad.string,
-                group: vlad({
+                group: vlad.sync({
                     field: vlad.string,
-                    subgroup: vlad({
+                    subgroup: vlad.sync({
                         field: vlad.string
                     })
                 }),
-                array: vlad.array.of(vlad({
+                array: vlad.array.of(vlad.sync({
                     field: vlad.string,
-                    subgroup: vlad({
+                    subgroup: vlad.sync({
                         field: vlad.string
                     }),
-                    subarray: vlad.array.of(vlad({
+                    subarray: vlad.array.of(vlad.sync({
                         field: vlad.string
                     }))
                 }))

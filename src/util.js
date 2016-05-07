@@ -1,5 +1,4 @@
-var error = require('./errors'),
-    Promise = require('bluebird');
+var error = require('./errors');
 
 /**
  * A property definer, used for chained syntax
@@ -71,43 +70,6 @@ function keyMap(ctx, fn) {
     return obj;
 }
 
-/**
- * Resolve an object of promises
- * @param {Object} obj
- * @return {Promise}
- */
-function resolveObject(obj) {
-    var vals = values(obj),
-        keys = Object.keys(obj);
-
-    return Promise.all(vals.map(function(val, key) {
-        return Promise.resolve(val).reflect();
-    })).then(function(results) {
-        var rejected = {},
-            resolved = {},
-            success = true;
-
-        // go over each promsei
-        results.forEach(function(result, i) {
-
-            // if we haven't given up yet, add to resolved map
-            if (success && result.isFulfilled()) {
-                resolved[keys[i]] = result.value();
-            }
-
-            // rejected add to rejected map and set success flag to false
-            if (result.isRejected()) {
-                success = false;
-                rejected[keys[i]] = result.reason();
-            }
-        });
-
-        return success ?
-            Promise.resolve(resolved) :
-            Promise.reject(new error.GroupValidationError('Invalid object.', rejected));
-    });
-}
-
 function reduce(obj, fn, memo) {
     for (var key in obj) {
         memo = fn(memo, obj[key], key);
@@ -150,13 +112,23 @@ function isObject(obj) {
     return Object.prototype.toString.call( obj ) === "[object Object]";
 }
 
+function tryFunction(fn, arg) {
+    try {
+        return fn(arg);
+    } catch (e) {
+        if (e instanceof error.ValidationError) throw e;
+        throw new error.FieldValidationError(e.message);
+    }
+}
+
+
 module.exports = {
     defineProperty: defineProperty,
     defineGetters: defineGetters,
     defineSetters: defineSetters,
     keyMap: keyMap,
-    resolveObject: resolveObject,
     isObject: isObject,
+    tryFunction: tryFunction,
     noop: function(){},
 
     // lodash replacements
