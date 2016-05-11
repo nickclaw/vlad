@@ -46,7 +46,7 @@ function defineSetters(ctx, setters) {
         };
 
         // for debugging
-        ctx[name].name = ctx[name].displayname = name;
+        ctx[name].displayName = name;
     });
     return ctx;
 };
@@ -61,7 +61,7 @@ function defineSetters(ctx, setters) {
  */
 function keyMap(ctx, fn) {
     var obj = {};
-    for(key in ctx) {
+    for(var key in ctx) {
         var value = ctx[key],
             newKey = fn(value, key);
 

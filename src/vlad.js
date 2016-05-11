@@ -34,10 +34,9 @@ function vlad(schema) {
     // handle a custom validation function
     } else if (typeof schema === 'function') {
 
-        var vladidateFn = function(val) {
+        return function(val) {
             return resolve(schema, null, val);
         };
-        return util.extend(vladidateFn, schema);
 
     // handle an object of validators
     } else if (util.isObject(schema)) {
@@ -47,7 +46,7 @@ function vlad(schema) {
         // or a 'vladitate' function
         json = util.reduce(schema, reduceSchema, {});
 
-        var vladidateObj = function(obj) {
+        return function(obj) {
             var didFail = false;
             var errs = {};
             var vals = {};
@@ -67,8 +66,6 @@ function vlad(schema) {
                 return vals;
             }
         };
-
-        return util.extend(vladidateObj, json);
     } else {
         throw new error.SchemaFormatError("Invalid schema.", schema);
     }
@@ -279,16 +276,11 @@ function callbackWrapper(schema) {
 function promiseWrapper(schema) {
     var validate = vlad(schema);
 
-    var wrapper =  function(obj) {
+    return function(obj) {
         return Promise.try(function() {
             return validate(obj);
         });
     }
-
-    util.each(validate, function(fn, key) {
-        wrapper[key] = promiseWrapper(fn);
-    });
-    return wrapper;
 }
 
 /**

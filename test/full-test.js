@@ -9,21 +9,6 @@ describe('validation stress test', function() {
         text: vlad.integer
     });
 
-    it('should be possible to access sub validators', function() {
-        expect(validate.firstName).to.be.instanceof(Function);
-        expect(validate.lastName).to.be.instanceof(Function);
-        expect(validate.age).to.be.instanceof(Function);
-        expect(validate.score).to.be.instanceof(Function);
-        expect(validate.text).to.be.instanceof(Function);
-    });
-
-    it('should be possible to validate objects properties with vlad properties', function() {
-        return Promise.all([
-            validate.firstName('nicholas').should.be.fulfilled,
-            validate.lastName('asdfsafasfasfasfasfasfasfasffafsadfasfsafsaf').should.be.rejected
-        ]);
-    });
-
     it('should return the validated values', function() {
         var obj = {
             firstName: 'Nicholas',
