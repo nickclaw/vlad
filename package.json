@@ -1,6 +1,6 @@
 {
   "name": "vlad",
-  "version": "0.19.1",
+  "version": "1.0.0",
   "description": "JSON schema validation with a chainable syntax.",
   "main": "index.js",
   "scripts": {
