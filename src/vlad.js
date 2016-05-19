@@ -27,7 +27,7 @@ function vlad(schema) {
     if (schema instanceof Property) {
         json = schema.toSchema();
 
-        return function(val) {
+        return function validateProperty(val) {
             return resolve(json, schema, val);
         };
 
@@ -35,7 +35,7 @@ function vlad(schema) {
     } else if (typeof schema === 'function') {
 
         return function(val) {
-            return resolve(schema, null, val);
+            return resolve validateFunction(schema, null, val);
         };
 
     // handle an object of validators
@@ -46,7 +46,7 @@ function vlad(schema) {
         // or a 'vladitate' function
         json = util.reduce(schema, reduceSchema, {});
 
-        return function(obj) {
+        return function validateObject(obj) {
             var didFail = false;
             var errs = {};
             var vals = {};
@@ -254,7 +254,7 @@ function resolve(rule, schema, value, root) {
 function callbackWrapper(schema) {
     var validate = vlad(schema);
 
-    return function(obj, callback) {
+    return function validateCb(obj, callback) {
         var val = obj;
         var err = null;
 
@@ -276,7 +276,7 @@ function callbackWrapper(schema) {
 function promiseWrapper(schema) {
     var validate = vlad(schema);
 
-    return function(obj) {
+    return function validateAsync(obj) {
         return Promise.try(function() {
             return validate(obj);
         });
@@ -297,7 +297,7 @@ function middlewareWrapper(prop, schema) {
 
     var validate = vlad(schema);
 
-    return function(req, res, next) {
+    return function validateMiddleware(req, res, next) {
         var err = null;
 
         try {
