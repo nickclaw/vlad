@@ -34,8 +34,8 @@ function vlad(schema) {
     // handle a custom validation function
     } else if (typeof schema === 'function') {
 
-        return function(val) {
-            return resolve validateFunction(schema, null, val);
+        return function validateFunction(val) {
+            return resolve(schema, null, val);
         };
 
     // handle an object of validators
