@@ -53,7 +53,7 @@ describe('vlad validation errors', function() {
                 group: {
                     field: 10,
                     subgroup: {
-                        field: 10
+                        field: {}
                     }
                 },
                 array: [
@@ -63,8 +63,8 @@ describe('vlad validation errors', function() {
                             field: 10
                         },
                         subarray: [
-                            {field: 10},
-                            {field: 10}
+                            {field: {}},
+                            {field: {}}
                         ]
                     },
                     {
@@ -73,8 +73,8 @@ describe('vlad validation errors', function() {
                             field: 10
                         },
                         subarray: [
-                            {field: 10},
-                            {field: 10}
+                            {field: {}},
+                            {field: {}}
                         ]
                     }
                 ]

@@ -21,7 +21,7 @@ describe('callback style validation', function() {
 
     it("should reject an invalid value", function(done) {
         validate({
-            a: 1,
+            a: {},
             b: "test"
         }, function(err, data) {
             expect(err).to.be.instanceof(vlad.GroupValidationError);
@@ -59,7 +59,7 @@ describe('middleware style validation', function() {
     it("should reject an invalid value", function(done) {
         var res = {},
             req = {
-                body: {a: 1, b: 'test'}
+                body: {a: {}, b: 'test'}
             };
 
         validate(req, res, function(err) {

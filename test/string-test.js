@@ -82,4 +82,41 @@ describe('string property validation', function() {
         });
     });
 
+    describe('parsing numbers to strings', function() {
+
+        var validate = vlad(vlad.string);
+
+        it("should parse an integer to a string", function() {
+            return validate(0).should.be.fulfilled
+            .then(function(value) {
+                expect(value).to.equal('0');
+            });
+        });
+
+        it('should parse a float to a string', function() {
+            return validate(0.11).should.be.fulfilled
+            .then(function(value) {
+                expect(value).to.equal('0.11');
+            });
+        });
+    });
+
+    describe('parsing booleans to strings', function() {
+
+        var validate = vlad(vlad.string);
+
+        it('should parse true to "true"', function() {
+            return validate(true).should.be.fulfilled
+            .then(function(value) {
+                expect(value).to.equal('true');
+            });
+        });
+
+        it('should parse false to "false"', function() {
+            return validate(false).should.be.fulfilled
+            .then(function(value) {
+                expect(value).to.equal('false');
+            });
+        });
+    });
 });

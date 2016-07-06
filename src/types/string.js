@@ -1,8 +1,19 @@
 var util = require('../util'),
-    property = require('../property');
+    property = require('../property'),
+    e = require('../errors');
 
 var string = property.extend();
 string._type = 'string';
+
+string.parse = function parse(val) {
+    switch(typeof val) {
+        case 'string': return val;
+        case 'number': return String(val);
+        case 'boolean': return val ? 'true' : 'false';
+        default: throw new e.FieldValidationError(val + " is not a string")
+    }
+};
+
 //
 // Property value setters
 //
