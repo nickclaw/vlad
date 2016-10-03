@@ -108,6 +108,7 @@ var getters = {
     array: require('./types/array'),
     boolean: require('./types/boolean'),
     date: require('./types/date'),
+    object: require('./types/object'),
     any: function() {
         return property.extend();
     }

@@ -6,7 +6,8 @@ describe('validation stress test', function() {
 
         age: vlad.integer.required.min(18).max(100),
         score: vlad.number.multipleOf(5.5).default(11),
-        text: vlad.integer
+        text: vlad.integer,
+        metadata: vlad.object.required,
     });
 
     it('should return the validated values', function() {
@@ -15,7 +16,10 @@ describe('validation stress test', function() {
             lastName: 'Clawson',
             age: 21,
             score: 16.5,
-            text: undefined
+            text: undefined,
+            metadata: {
+              foo: 'bar',
+            },
         };
 
         return validate(obj).should.be.fulfilled
@@ -31,6 +35,7 @@ describe('validation stress test', function() {
         return validate(obj).should.be.rejected
         .then(function(err) {
             expect(err.fields.age).to.be.instanceof(vlad.FieldValidationError);
+            expect(err.fields.metadata).to.be.instanceof(vlad.FieldValidationError);
         });
     });
 
@@ -38,7 +43,8 @@ describe('validation stress test', function() {
 
         var obj = {
             firstName: 'Nicholas',
-            age: 21
+            age: 21,
+            metadata: {},
         };
 
         return validate(obj).should.be.fulfilled
@@ -68,7 +74,8 @@ describe('validation stress test', function() {
         var obj = {
             lastName: 'abcdefghijklmnopqrstuvwxyz',
             age: 101,
-            score: 1
+            score: 1,
+            metadata: null
         };
 
         return validate(obj).should.be.rejected.then(function(err) {
@@ -77,6 +84,7 @@ describe('validation stress test', function() {
             expect(err.fields.lastName).to.be.instanceof(vlad.FieldValidationError);
             expect(err.fields.age).to.be.instanceof(vlad.FieldValidationError);
             expect(err.fields.score).to.be.instanceof(vlad.FieldValidationError);
+            expect(err.fields.metadata).to.be.instanceof(vlad.FieldValidationError);
         });
     });
 });
