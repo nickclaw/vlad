@@ -121,6 +121,14 @@ function tryFunction(fn, arg) {
     }
 }
 
+function safeCall(fn, arg) {
+    try {
+        return tryFunction(fn, arg);
+    } catch (e) {
+        return e;
+    }
+}
+
 
 module.exports = {
     defineProperty: defineProperty,
@@ -129,6 +137,7 @@ module.exports = {
     keyMap: keyMap,
     isObject: isObject,
     tryFunction: tryFunction,
+    safeCall: safeCall,
     noop: function(){},
 
     // lodash replacements

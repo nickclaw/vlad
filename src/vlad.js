@@ -125,7 +125,7 @@ util.defineGetters(promiseWrapper, getters);
  * @param {Array.<String>}
  * @return {Property}
  */
-vlad.enum = promiseWrapper.enum = function(enums) {
+vlad.enum = promiseWrapper.enum = function vlad$enum(enums) {
     var prop = new Property();
     prop._enum = enums;
     return prop;
@@ -139,7 +139,7 @@ vlad.enum = promiseWrapper.enum = function(enums) {
  * @param {String?} message - optional error message
  * @return {Property}
  */
-vlad.equals = promiseWrapper.equals = function(value, message) {
+vlad.equals = promiseWrapper.equals = function vlad$equals(value, message) {
     var prop = new Property();
     prop.validate = function(val) {
         if (value !== val) {
@@ -151,6 +151,22 @@ vlad.equals = promiseWrapper.equals = function(value, message) {
     return prop;
 };
 
+vlad.or = promiseWrapper.or = function vlad$or(arr) {
+  var prop = new Property();
+
+  prop.validate = function(val) {
+      var lastErr = new error.FieldValidationError('Invalid value.');
+      for (var i = 0; i < arr.length; i++) {
+          var result = util.safeCall(arr[i], val);
+          if (result instanceof error.ValidationError) lastErr = result;
+          else return result;
+      }
+      throw lastErr;
+  }
+
+  return prop;
+}
+
 //
 // Formats
 //
@@ -161,7 +177,7 @@ vlad.equals = promiseWrapper.equals = function(value, message) {
  * @param {Function}
  * @return vlad
  */
-vlad.addFormat = promiseWrapper.addFormat = function() {
+vlad.addFormat = promiseWrapper.addFormat = function vlad$addFormat() {
     validator.addFormat.apply(validator, arguments);
     return vlad;
 };
