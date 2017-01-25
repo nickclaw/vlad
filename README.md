@@ -10,7 +10,7 @@ A simple asynchronous JSON validator with a chainable syntax.
 ```javascript
 var validate = vlad({
     email: vlad.string,
-    location: vlad({
+    location: vlad.sync({
         long: vlad.number.required.within(-180, 180),
         lat: vlad.number.required.within(-90, 90)
     }),
@@ -88,6 +88,7 @@ validate.field('hello world').then( /* handle */ )
 ## API Reference
 - [Creation](API.md#creation)
     - [`vlad(schema)`](API.md#vladschema---functionvalue)
+    - [`vlad.sync(schema)`](API.md#vladsyncschema---functionvalue)
     - [`vlad.promise(schema)`](API.md#vladpromiseschema---functionvalue)
     - [`vlad.callback(schema)`](API.md#vladcallbackschema---functionvalue-callback)
     - [`vlad.middleware([prop, ] schema)`](API.md#vladmiddlewareprop-schema---function-req-res-next)
@@ -109,6 +110,7 @@ validate.field('hello world').then( /* handle */ )
     - [`vlad.enum(options)`](API.md#vladenumoptions)
     - [`vlad.equals(value [, message])`](API.md#vladequalsvalue--message)
     - [`vlad.any`](API.md#vladany)
+    - [`vlad.or`](API.md#vlador)
 - [Errors](API.md#errors)
     - [`vlad.ValidationError(message)`](API.md#vladvalidationerrormessage)
     - [`vlad.FieldValidationError(message)`](API.md#vladfieldvalidationerrormessage)

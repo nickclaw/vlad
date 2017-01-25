@@ -2,6 +2,7 @@
 
 - [Creation](#creation)
     - [`vlad(schema)`](#vladschema---functionvalue)
+    - [`vlad.sync(schema)`](#vladsyncschema---functionvalue)
     - [`vlad.promise(schema)`](#vladpromiseschema---functionvalue)
     - [`vlad.callback(schema)`](#vladcallbackschema---functionvalue-callback)
     - [`vlad.middleware([prop, ] schema)`](#vladmiddlewareprop-schema---function-req-res-next)
@@ -23,6 +24,7 @@
     - [`vlad.enum(options)`](#vladenumoptions)
     - [`vlad.equals(value [, message])`](#vladequalsvalue--message)
     - [`vlad.any`](#vladany)
+    - [`vlad.or`](#vlador)
 - [Errors](#errors)
     - [`vlad.ValidationError(message)`](#vladvalidationerrormessage)
     - [`vlad.FieldValidationError(message)`](#vladfieldvalidationerrormessage)
@@ -34,6 +36,9 @@
 
 ##### `vlad(schema)` -> `function(value)`
 Create a new validation function. This function will take in a value and return a promise that either resolves with the validated values, or rejects with the relevant errors.
+
+#### `vlad.sync(schema)` -> `function(value)`
+Create a synchronous validation function. This function will take in a value and throw a ValidationError or return the validated value. **This is the function you should use for nested validation**.
 
 ##### `vlad.promise(schema)` -> `function(value)`
 An alias for [`vlad(schema)`](#vladschema---function)
@@ -49,7 +54,7 @@ This can be useful when parsing and normalizing basic queries in express, especi
 
 ## Validation
 
-The three basic types of validation are by _promise_, _callback_, or _middleware_. Because vlad is based on [Bluebird](https://github.com/petkaantonov/bluebird) the _promise_ based syntax is the most powerful, with [subvalidators](#subvalidators) readily available.
+The 4 basic types of validation are by _sync_, _promise_, _callback_, or _middleware_.
 
 ```javascript
 
@@ -87,28 +92,6 @@ router.use(function(err, req, res, next) {
 
 ```
 
-### Subvalidators
-Subbvalidators are only available through the promise syntax. They are easier to explain by example.
-
-```javascript
-var validate = vlad({
-    a: vlad({
-        nested: vlad({
-            path: vlad.string
-        })
-    })
-});
-
-// validate the whole object
-validate({a: {nested: {path: "hello world"}}}).then(/* */);
-
-// validate a subobject using a subvalidator
-validate.a.nested({path: "hello world"}).then(/* */);
-
-// validate specific field using a subvalidator
-validate.a.nested.path("hello world").then(/* */);
-```
-
 ## Schema
 
 The vlad function can parse several types of schema when creating validation functions. Invalid types should automatically throw a `vlad.SchemaFormatError`.
@@ -117,14 +100,13 @@ The vlad function can parse several types of schema when creating validation fun
 The most common type of schema is a _property_. More information about them can be found [below](#propertytypes).
 
 ##### Function
-You can pass in your own custom validation function to vlad. The function will be called using [bluebird](https://github.com/petkaantonov/bluebird)'s [`Promise.try`](https://github.com/petkaantonov/bluebird/blob/master/API.md#promisetryfunction-fn--arraydynamicdynamic-arguments--dynamic-ctx----promise). Which means you can feel free to return asynchronous promises, or synchronously throw errors / return values.
-
-__Note:__ You must return the validated value (or a promise that resolves to the validated value), or the valid result will always appear to be `undefined`.
+You can pass in your own custom validation function to vlad. Through it, you must synchronously throw an error or return a value.
 
 ```
 // wrong
 var validator = vlad(function(value) {
     if (isNotValid(value)) throw vlad.FieldValidationError("Value is bad.");
+    // no value returned!
 });
 
 // right
@@ -143,7 +125,7 @@ __Note:__ you can only use properties or functions as the values, not other obje
 ```javascript
 var validator = vlad({
     a: vlad.string,
-    nested: vlad({
+    nested: vlad.sync({
         a: vlad.string
     })
 });
@@ -207,6 +189,8 @@ var validator = vlad(vlad.array.of(subType));
 ##### `vlad.any`
 * Matches any data type.
 
+##### `vlad.or([])`
+* Tries each validator passed to it.
 
 ## Errors
 
