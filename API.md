@@ -192,6 +192,16 @@ var validator = vlad(vlad.array.of(subType));
 ##### `vlad.or([])`
 * Tries each validator passed to it.
 
+```js
+vlad.sync(vlad.or([
+  vlad.string, //supports properties
+  val => {     // or functions
+    if (val === null) throw new Error('invalid');
+    return val;
+  }
+]))
+```
+
 ## Errors
 
 ##### `vlad.ValidationError(message)`
