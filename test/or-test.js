@@ -26,6 +26,7 @@ describe('or validation', function() {
         }
     ]));
 
+
     it('should attempt the first possibility first', function() {
         return validate('1').then(val => {
             expect(val).to.equal(1);
@@ -78,5 +79,15 @@ describe('or validation', function() {
       return validateMixedFunc('BAR').then(val => {
           expect(val).to.equal('FOO! BAR');
       });
+    });
+
+    it('should throw a schema error if or is passed an invalid vlad object', function() {
+      try {
+        var invalidOr = vlad(vlad.or([
+          1
+        ]));
+      } catch (e) {
+        expect(e.message).to.equal('Invalid schema.')
+      }
     });
 });
