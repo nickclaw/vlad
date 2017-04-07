@@ -153,11 +153,14 @@ vlad.equals = promiseWrapper.equals = function vlad$equals(value, message) {
 
 vlad.or = promiseWrapper.or = function vlad$or(arr) {
   var prop = new Property();
+  var vladArr = arr.map(v => {
+    return vlad(v);
+  });
 
   prop.validate = function(val) {
       var lastErr = new error.FieldValidationError('Invalid value.');
-      for (var i = 0; i < arr.length; i++) {
-          var result = util.safeCall(arr[i], val);
+      for (var i = 0; i < vladArr.length; i++) {
+          var result = util.safeCall(vladArr[i], val);
           if (result instanceof error.ValidationError) lastErr = result;
           else return result;
       }
