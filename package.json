@@ -4,7 +4,12 @@
   "description": "JSON schema validation with a chainable syntax.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha ./test/"
+    "test": "mocha test",
+    "prepublish": "in-publish && npm run test || not-in-publish",
+    "publish:major": "npm version major && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:patch": "npm version patch && npm publish",
+    "postpublish": "git push origin master --tags"
   },
   "repository": {
     "type": "git",
@@ -21,6 +26,11 @@
     "name": "Nicholas Clawson",
     "url": "http://nickclaw.com"
   },
+  "contributors": [
+    {
+      "name": "Holden Stegman"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nickclaw/vlad/issues"
@@ -34,6 +44,7 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
+    "in-publish": "^2.0.0",
     "mocha": "^2.0.1",
     "require-new": "^1.1.0"
   }
