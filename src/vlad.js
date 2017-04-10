@@ -1,6 +1,5 @@
 var util = require('./util'),
     error = require('./errors'),
-    Promise = require('bluebird'),
     validator = require('tv4').freshApi(),
     property = require('./property'),
     Property = property.Property,
@@ -295,9 +294,7 @@ function promiseWrapper(schema) {
     var validate = vlad(schema);
 
     return function validateAsync(obj) {
-        return Promise.try(function() {
-            return validate(obj);
-        });
+        return Promise.resolve(obj).then(validate);
     }
 }
 
