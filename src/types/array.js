@@ -42,7 +42,7 @@ util.defineSetters(array, {
 
     of: function(validator) {
         if (validator instanceof property.Property) {
-            this._validator = require('../vlad').sync(validator);
+            this._validator = require('../vlad')(validator);
         } else if (typeof validator === 'function') {
             this._validator = validator;
         } else {

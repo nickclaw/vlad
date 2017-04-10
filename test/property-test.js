@@ -29,7 +29,7 @@ describe('property definition', function() {
     });
 
     describe('vlad.any property validation', function() {
-        var validate = vlad({
+        var validate = vlad.promise({
             a: vlad.any.default(1),
             b: vlad.any.default('hello world'),
             c: vlad.any,

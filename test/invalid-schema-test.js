@@ -1,5 +1,5 @@
 describe('rejecting invalid schema', function() {
-    var values = [1, 'hello world', [vlad(vlad.string)], Number(), String(), null, undefined]
+    var values = [1, 'hello world', [vlad.promise(vlad.string)], Number(), String(), null, undefined]
 
     describe('schema', function() {
         values.forEach(function(value) {

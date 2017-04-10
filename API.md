@@ -35,10 +35,10 @@
 ## Creation
 
 ##### `vlad(schema)` -> `function(value)`
-Create a new validation function. This function will take in a value and return a promise that either resolves with the validated values, or rejects with the relevant errors.
+Create a synchronous validation function. This function will take in a value and throw a ValidationError or return the validated value. **This is the function you should use for nested validation**.
 
 #### `vlad.sync(schema)` -> `function(value)`
-Create a synchronous validation function. This function will take in a value and throw a ValidationError or return the validated value. **This is the function you should use for nested validation**.
+The same as `vlad(schema)`.
 
 ##### `vlad.promise(schema)` -> `function(value)`
 An alias for [`vlad(schema)`](#vladschema---function)
@@ -58,8 +58,17 @@ The 4 basic types of validation are by _sync_, _promise_, _callback_, or _middle
 
 ```javascript
 
+// sync
+var validator = vlad(schema); // or vlad.sync(schema)
+try {
+  const value = validate(object);
+  // handle value
+} catch (e) {
+  // handle error
+}
+
 // promise
-var validator = vlad(schema); // or vlad.promise(schema);
+var validator = vlad.promise(schema);
 validator(object)
     .then(/* handle value */)
     .catch(/* or handle error */);
@@ -125,7 +134,7 @@ __Note:__ you can only use properties or functions as the values, not other obje
 ```javascript
 var validator = vlad({
     a: vlad.string,
-    nested: vlad.sync({
+    nested: vlad({
         a: vlad.string
     })
 });
@@ -193,7 +202,7 @@ var validator = vlad(vlad.array.of(subType));
 * Tries each validator passed to it.
 
 ```js
-vlad.sync(vlad.or([
+vlad(vlad.or([
   vlad.string, //supports properties
   val => {     // or functions
     if (val === null) throw new Error('invalid');

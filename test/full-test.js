@@ -1,6 +1,6 @@
 describe('validation stress test', function() {
 
-    var validate = vlad({
+    var validate = vlad.promise({
         firstName: vlad.string.required.catch.within(5, 15),
         lastName: vlad.string.required.default('').maxLength(25),
 

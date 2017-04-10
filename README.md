@@ -8,9 +8,9 @@ A simple asynchronous JSON validator with a chainable syntax.
 
 #### Object Validation
 ```javascript
-var validate = vlad({
+var validate = vlad.promise({
     email: vlad.string,
-    location: vlad.sync({
+    location: vlad({
         long: vlad.number.required.within(-180, 180),
         lat: vlad.number.required.within(-90, 90)
     }),

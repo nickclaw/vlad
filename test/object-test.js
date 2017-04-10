@@ -1,6 +1,6 @@
 describe('object property validation', function() {
 
-    var validate = vlad(vlad.object);
+    var validate = vlad.promise(vlad.object);
 
     it('should accept {}', function() {
         return validate({}).should.be.fulfilled

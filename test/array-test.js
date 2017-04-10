@@ -4,8 +4,8 @@ describe('array property validation', function() {
 
 
         describe('validation function as type', function() {
-            var subType = vlad.sync(vlad.number);
-            var validate = vlad(vlad.array.of(subType));
+            var subType = vlad(vlad.number);
+            var validate = vlad.promise(vlad.array.of(subType));
 
             it('should accept a valid value', function() {
                 return validate([1,2,3,4]).should.be.fulfilled
@@ -36,7 +36,7 @@ describe('array property validation', function() {
 
         describe('vlad property as type', function() {
             var subType = vlad.number;
-            var validate = vlad(vlad.array.of(subType));
+            var validate = vlad.promise(vlad.array.of(subType));
 
             it('should accept a valid value', function() {
                 return validate([1,2,3,4]).should.be.fulfilled
@@ -74,7 +74,7 @@ describe('array property validation', function() {
 
         // test min/max minLength/mathLength respectively
         for (var i = 0, array = ["", "Length"]; i < array.length; i++) {
-            var validate = vlad(vlad.array['min' + array[i]](1)['max' + array[i]](1));
+            var validate = vlad.promise(vlad.array['min' + array[i]](1)['max' + array[i]](1));
 
             it('should accept any array when no type is defined', function() {
                 return validate([1]).should.be.fulfilled

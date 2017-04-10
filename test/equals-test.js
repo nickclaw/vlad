@@ -1,6 +1,6 @@
 describe('straight equals validation', function() {
 
-    var validate = vlad(vlad.equals(true, 'you did not accept the terms'));
+    var validate = vlad.promise(vlad.equals(true, 'you did not accept the terms'));
 
     it('should accept the matching value', function() {
         return validate(true).should.be.fulfilled

@@ -16,7 +16,7 @@ describe('custom function validation', function() {
 
     describe('synchronous custom validation', function() {
 
-        var validate = vlad(syncValidation);
+        var validate = vlad.promise(syncValidation);
 
         it('should accept a valid value', function() {
             return validate(true).should.be.fulfilled

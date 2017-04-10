@@ -2,8 +2,8 @@ describe('number property validation', function() {
 
     describe('max', function() {
 
-        var max = vlad(vlad.number.max(10));
-        var exclusive = vlad(vlad.number.max(10).exclusive);
+        var max = vlad.promise(vlad.number.max(10));
+        var exclusive = vlad.promise(vlad.number.max(10).exclusive);
 
         it('throws when value is higher than max', function() {
             return max(11).should.be.rejected;
@@ -22,8 +22,8 @@ describe('number property validation', function() {
 
     describe('min', function() {
 
-        var min = vlad(vlad.number.min(10));
-        var exclusive = vlad(vlad.number.min(10).exclusive);
+        var min = vlad.promise(vlad.number.min(10));
+        var exclusive = vlad.promise(vlad.number.min(10).exclusive);
 
         it('throws when value is lower than min', function() {
             return min(9).should.be.rejected;
@@ -42,7 +42,7 @@ describe('number property validation', function() {
 
     describe('multipleOf', function() {
 
-        var validate = vlad({
+        var validate = vlad.promise({
             value: vlad.number.multipleOf(10)
         });
 
@@ -56,7 +56,7 @@ describe('number property validation', function() {
     });
 
     describe('parsing strings to numbers', function() {
-        var validate = vlad(vlad.number);
+        var validate = vlad.promise(vlad.number);
 
         it('throws when the value is not a number', function() {
             return validate('hello').should.be.rejected

@@ -1,6 +1,6 @@
 describe('boolean property validation', function() {
 
-    var validate = vlad(vlad.boolean);
+    var validate = vlad.promise(vlad.boolean);
 
     it('should accept true', function() {
         return validate(true).should.be.fulfilled

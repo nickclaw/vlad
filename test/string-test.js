@@ -2,7 +2,7 @@ describe('string property validation', function() {
 
     describe('maxLength', function() {
 
-        var validate = vlad(vlad.string.maxLength(9));
+        var validate = vlad.promise(vlad.string.maxLength(9));
 
         it('throws when the string is too long', function() {
             return validate('0123456789').should.be.rejected;
@@ -15,7 +15,7 @@ describe('string property validation', function() {
 
     describe('minLength', function() {
 
-        var validate = vlad(vlad.string.minLength(5));
+        var validate = vlad.promise(vlad.string.minLength(5));
 
         it('throws when the string is too short', function() {
             return validate('').should.be.rejected;
@@ -28,7 +28,7 @@ describe('string property validation', function() {
 
     describe('pattern', function() {
 
-        var validate = vlad({
+        var validate = vlad.promise({
             val: vlad.string.pattern(/^[A-Z]+$/)
         });
 
@@ -43,7 +43,7 @@ describe('string property validation', function() {
 
     describe('within', function() {
 
-        var validate = vlad({
+        var validate = vlad.promise({
             val: vlad.string.within(5, 9)
         });
 
@@ -66,7 +66,7 @@ describe('string property validation', function() {
             return null;
         });
 
-        var validate = vlad(vlad.string.format('is-zero'));
+        var validate = vlad.promise(vlad.string.format('is-zero'));
 
         it('should not reject a valid format', function() {
 
@@ -84,7 +84,7 @@ describe('string property validation', function() {
 
     describe('parsing numbers to strings', function() {
 
-        var validate = vlad(vlad.string);
+        var validate = vlad.promise(vlad.string);
 
         it("should parse an integer to a string", function() {
             return validate(0).should.be.fulfilled
@@ -103,7 +103,7 @@ describe('string property validation', function() {
 
     describe('parsing booleans to strings', function() {
 
-        var validate = vlad(vlad.string);
+        var validate = vlad.promise(vlad.string);
 
         it('should parse true to "true"', function() {
             return validate(true).should.be.fulfilled

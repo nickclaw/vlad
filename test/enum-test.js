@@ -2,7 +2,7 @@ describe('enum property validation', function() {
 
     describe('string enum validation', function() {
 
-        var validate = vlad(vlad.enum(['a', 'b', 'c', 'd']));
+        var validate = vlad.promise(vlad.enum(['a', 'b', 'c', 'd']));
 
         it('should accept a valid value', function() {
             return validate('a').should.be.fulfilled
@@ -16,7 +16,7 @@ describe('enum property validation', function() {
 
     describe('number enum validation', function() {
 
-        var validate = vlad(vlad.enum([1,2,3,4]));
+        var validate = vlad.promise(vlad.enum([1,2,3,4]));
 
         it('should accept a valid value', function() {
             return validate(1).should.be.fulfilled
@@ -34,7 +34,7 @@ describe('enum property validation', function() {
 
     describe('mixed typed validation', function() {
 
-        var validate = vlad(vlad.enum(['a', 1, 'b', 2]));
+        var validate = vlad.promise(vlad.enum(['a', 1, 'b', 2]));
 
         it('works with one type', function() {
             return validate('a').should.be.fulfilled;
@@ -47,7 +47,7 @@ describe('enum property validation', function() {
 
     describe('setting the default value', function() {
 
-        var validate = vlad(vlad.enum(['a', 'b', 'c', 'd']).default('d'));
+        var validate = vlad.promise(vlad.enum(['a', 'b', 'c', 'd']).default('d'));
 
         it('correctly goes to the default value', function() {
             return validate().should.be.fulfilled

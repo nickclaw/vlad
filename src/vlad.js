@@ -5,7 +5,7 @@ var util = require('./util'),
     Property = property.Property,
     each = require('lodash/each');
 
-module.exports = promiseWrapper;
+module.exports = vlad;
 module.exports.sync = vlad;
 module.exports.promise = promiseWrapper;
 module.exports.callback = callbackWrapper;
@@ -80,18 +80,16 @@ function vlad(schema) {
  * @param {Function|Property} validator
  * @return {vlad}
  */
-vlad.use = promiseWrapper.use = function(name, validator) {
+vlad.use = function(name, validator) {
     // case: Property
     if (validator instanceof Property) {
         util.defineProperty(vlad, name, validator.extend.bind(validator));
-        util.defineProperty(promiseWrapper, name, validator.extend.bind(validator))
     }
 
     // case: Function
     else if (typeof validator === 'function') {
         var fn = function() { return validator; };
         util.defineProperty(vlad, name, fn);
-        util.defineProperty(promiseWrapper, name, fn);
     }
 
     else throw error.SchemaFormatError("Could not add `" + name + "` validator, not an instance of Property or Function.");
@@ -114,7 +112,6 @@ var getters = {
 };
 
 util.defineGetters(vlad, getters);
-util.defineGetters(promiseWrapper, getters);
 
 /**
  * Creates a tv4 parseable enum property
@@ -124,7 +121,7 @@ util.defineGetters(promiseWrapper, getters);
  * @param {Array.<String>}
  * @return {Property}
  */
-vlad.enum = promiseWrapper.enum = function vlad$enum(enums) {
+vlad.enum = function vlad$enum(enums) {
     var prop = new Property();
     prop._enum = enums;
     return prop;
@@ -138,7 +135,7 @@ vlad.enum = promiseWrapper.enum = function vlad$enum(enums) {
  * @param {String?} message - optional error message
  * @return {Property}
  */
-vlad.equals = promiseWrapper.equals = function vlad$equals(value, message) {
+vlad.equals = function vlad$equals(value, message) {
     var prop = new Property();
     prop.validate = function(val) {
         if (value !== val) {
@@ -150,7 +147,7 @@ vlad.equals = promiseWrapper.equals = function vlad$equals(value, message) {
     return prop;
 };
 
-vlad.or = promiseWrapper.or = function vlad$or(_arr) {
+vlad.or = function vlad$or(_arr) {
   var prop = new Property();
   var arr = _arr.map(vlad);
 
@@ -177,7 +174,7 @@ vlad.or = promiseWrapper.or = function vlad$or(_arr) {
  * @param {Function}
  * @return vlad
  */
-vlad.addFormat = promiseWrapper.addFormat = function vlad$addFormat() {
+vlad.addFormat = function vlad$addFormat() {
     validator.addFormat.apply(validator, arguments);
     return vlad;
 };

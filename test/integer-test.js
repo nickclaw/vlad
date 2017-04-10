@@ -1,6 +1,6 @@
 describe('integer property validation', function() {
 
-    var validate = vlad(vlad.integer);
+    var validate = vlad.promise(vlad.integer);
 
     describe('validating integers', function() {
         it('should not allow floats', function() {
@@ -13,7 +13,7 @@ describe('integer property validation', function() {
     });
 
     describe('parsing strings to integers', function() {
-        var validate = vlad(vlad.integer);
+        var validate = vlad.promise(vlad.integer);
 
         it('throws when the value is not a number', function() {
             return validate('hello').should.be.rejected;

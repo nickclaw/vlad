@@ -1,6 +1,6 @@
 describe('date property validation', function() {
 
-    var validate = vlad(vlad.date);
+    var validate = vlad.promise(vlad.date);
 
     //
     it ('should accept valid dates', function() {

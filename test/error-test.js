@@ -29,20 +29,20 @@ describe('vlad validation errors', function() {
 
         it('should correctly serialize into json', function() {
 
-            var validator = vlad({
+            var validator = vlad.promise({
                 field: vlad.string,
-                group: vlad.sync({
+                group: vlad({
                     field: vlad.string,
-                    subgroup: vlad.sync({
+                    subgroup: vlad({
                         field: vlad.string
                     })
                 }),
-                array: vlad.array.of(vlad.sync({
+                array: vlad.array.of(vlad({
                     field: vlad.string,
-                    subgroup: vlad.sync({
+                    subgroup: vlad({
                         field: vlad.string
                     }),
-                    subarray: vlad.array.of(vlad.sync({
+                    subarray: vlad.array.of(vlad({
                         field: vlad.string
                     }))
                 }))

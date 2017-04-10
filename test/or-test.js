@@ -1,21 +1,21 @@
 describe('or validation', function() {
 
-    var validate = vlad(vlad.or([
-        vlad.sync(vlad.number),
-        vlad.sync(vlad.string)
+    var validate = vlad.promise(vlad.or([
+        vlad(vlad.number),
+        vlad(vlad.string)
     ]));
 
-    var validateProperties = vlad(vlad.or([
+    var validateProperties = vlad.promise(vlad.or([
         vlad.boolean,
         vlad.number
     ]));
 
-    var validateMixed = vlad(vlad.or([
+    var validateMixed = vlad.promise(vlad.or([
         vlad.number,
-        vlad.sync(vlad.string)
+        vlad(vlad.string)
     ]));
 
-    var validateMixedFunc = vlad(vlad.or([
+    var validateMixedFunc = vlad.promise(vlad.or([
         vlad.number,
         function(val) {
           if (!typeof val === 'string') {
@@ -83,7 +83,7 @@ describe('or validation', function() {
 
     it('should throw a schema error if or is passed an invalid vlad object', function() {
       try {
-        var invalidOr = vlad(vlad.or([
+        var invalidOr = vlad.promise(vlad.or([
           1
         ]));
       } catch (e) {

@@ -23,7 +23,7 @@ describe('using custom validators', function() {
             };
             vlad.use('test', test);
 
-            var validate = vlad(vlad.test);
+            var validate = vlad.promise(vlad.test);
             return validate('foo').should.be.rejected;
         });
 
@@ -34,7 +34,7 @@ describe('using custom validators', function() {
             };
             vlad.use('test', test);
 
-            var validate = vlad(vlad.test);
+            var validate = vlad.promise(vlad.test);
             return validate('foo').should.be.resolved;
         });
     });
@@ -46,7 +46,7 @@ describe('using custom validators', function() {
                 throw new Error();
             });
 
-            var validate = vlad(vlad.test);
+            var validate = vlad.promise(vlad.test);
             return validate('foo').should.be.rejected;
         });
 
@@ -55,7 +55,7 @@ describe('using custom validators', function() {
                 return true;
             });
 
-            var validate = vlad(vlad.test);
+            var validate = vlad.promise(vlad.test);
             return validate('foo').should.be.resolved;
         });
     });
